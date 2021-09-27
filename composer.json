@@ -8,9 +8,13 @@
         "php": "^7.3|^8.0",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
+        "joselfonseca/lighthouse-graphql-passport-auth": "^6.0",
         "laravel/framework": "^8.54",
+        "laravel/passport": "^10.1",
         "laravel/sanctum": "^2.11",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "mll-lab/laravel-graphql-playground": "^2.5",
+        "nuwave/lighthouse": "^5.23"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
