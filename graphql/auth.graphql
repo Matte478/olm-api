@@ -1,6 +1,6 @@
 input LoginInput {
-    username: String!
-    password: String!
+    username: String! @rules(apply: ["required", "email"])
+    password: String! @rules(apply: ["required"])
 }
 
 input RefreshTokenInput {
