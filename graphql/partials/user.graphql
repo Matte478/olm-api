@@ -6,6 +6,7 @@ extend type Query @guard(with: ["api"]) {
 
 extend type Mutation @guard(with: ["api"]) {
     updateUser(input: UpdateUserInput! @spread): User @update
+    deleteUser(id: ID!): User @delete
 }
 
 type User {
