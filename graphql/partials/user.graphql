@@ -1,0 +1,23 @@
+extend type Query @guard(with: ["api"]) {
+    users: [User!]! @paginate(type: "paginator" model: "App\\Models\\User")
+    user(id: ID @eq): User @find
+    me: User @auth
+}
+
+extend type Mutation @guard(with: ["api"]) {
+    updateUser(input: UpdateUserInput! @spread): User @update
+}
+
+type User {
+    id: ID!
+    name: String!
+    email: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+input UpdateUserInput @validator {
+    id: ID
+    name: String
+    email: String
+}
