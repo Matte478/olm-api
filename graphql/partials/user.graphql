@@ -5,8 +5,8 @@ extend type Query @guard(with: ["api"]) {
 }
 
 extend type Mutation @guard(with: ["api"]) {
-    updateUser(input: UpdateUserInput! @spread): User @update
-    deleteUser(id: ID!): User @delete
+    updateUser(input: UpdateUserInput! @spread): User! @update
+    deleteUser(id: ID!): User! @delete
 }
 
 type User {
@@ -18,7 +18,7 @@ type User {
 }
 
 input UpdateUserInput @validator {
-    id: ID
-    name: String
-    email: String
+    id: ID!
+    name: String!
+    email: String!
 }

@@ -16,14 +16,15 @@ class UpdateUserInputValidator extends Validator
     {
         return [
             'id' => [
-                'required'
+                'required',
+                'exists:users,id,deleted_at,NULL'
             ],
             'name' => [
-                'sometimes',
+                'required',
                 'string'
             ],
             'email' => [
-                'sometimes',
+                'required',
                 'email',
                 Rule::unique('users', 'email')->ignore($this->arg('id'), 'id')
             ]
