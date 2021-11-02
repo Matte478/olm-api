@@ -2,9 +2,7 @@
 
 use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 
 class FillDefaultUserAndPermissions extends Migration
 {
@@ -45,11 +43,18 @@ class FillDefaultUserAndPermissions extends Migration
             'role.delete',
         ]);
 
-        $studentPermissions = collect([
-           //
+        $teacherPermissions = collect([
+            //
         ]);
 
-        $allPermissions = $adminPermissions->merge($studentPermissions)->unique();
+        $studentPermissions = collect([
+            //
+        ]);
+
+        $allPermissions = $adminPermissions
+            ->merge($teacherPermissions)
+            ->merge($studentPermissions)
+            ->unique();
 
         $this->permissions = $allPermissions->map(function($permission) {
             return [
@@ -67,6 +72,13 @@ class FillDefaultUserAndPermissions extends Migration
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
                 'permissions' => $adminPermissions,
+            ],
+            [
+                'name' => 'Teacher',
+                'guard_name' => $this->guardName,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+                'permissions' => $teacherPermissions,
             ],
             [
                 'name' => 'Student',
