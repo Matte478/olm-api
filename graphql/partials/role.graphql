@@ -1,6 +1,7 @@
 extend type Query @guard(with: ["api"]) {
     roles: [Role!]! @all(model: "Spatie\\Permission\\Models\\Role")
     role(id: ID @eq): Role @find(model: "Spatie\\Permission\\Models\\Role")
+    permissions: [Permission!]! @all(model: "Spatie\\Permission\\Models\\Permission")
 }
 
 extend type Mutation @guard(with: ["api"]) {

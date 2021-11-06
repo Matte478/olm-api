@@ -15,6 +15,9 @@ type User {
     email: String!
     created_at: DateTime!
     updated_at: DateTime!
+#    roles: [Role!]! @hasMany
+#    permissions: [Permission!]! @hasMany
+    permissionsList: [String!]!
 }
 
 input UpdateUserInput @validator {

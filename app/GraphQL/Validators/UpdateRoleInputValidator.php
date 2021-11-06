@@ -22,7 +22,7 @@ class UpdateRoleInputValidator extends Validator
             'name' => [
                 'required',
                 'max:255',
-                Rule::unique('roles', 'name')
+                Rule::unique('roles', 'name')->ignore($this->arg('id'), 'id')
             ],
             'permissions' => [
                 'required',
