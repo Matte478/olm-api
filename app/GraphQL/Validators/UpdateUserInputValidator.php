@@ -27,6 +27,14 @@ class UpdateUserInputValidator extends Validator
                 'required',
                 'email',
                 Rule::unique('users', 'email')->ignore($this->arg('id'), 'id')
+            ],
+            "roles" => [
+                'array',
+                'nullable'
+            ],
+            "role_name.*" => [
+                'string',
+                'exists:Spatie\Permission\Models\Role,name'
             ]
         ];
     }
