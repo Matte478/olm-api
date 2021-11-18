@@ -12,7 +12,9 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, hasRoles;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles;
+
+    protected $guard_name = 'api';
 
     /**
      * The attributes that are mass assignable.
