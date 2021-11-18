@@ -30,16 +30,14 @@ class FillDefaultUserAndPermissions extends Migration
 
         $adminPermissions = collect([
             // users
-            'user.index',
             'user.show',
-            'user.edit',
+            'user.update',
             'user.delete',
 
             // roles
-            'role.index',
-            'role.create',
             'role.show',
-            'role.edit',
+            'role.create',
+            'role.update',
             'role.delete',
         ]);
 

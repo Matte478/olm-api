@@ -1,12 +1,20 @@
 extend type Query @guard(with: ["api"]) {
-    users: [User!]! @paginate(type: "paginator" model: "App\\Models\\User")
-    user(id: ID @eq): User @find
+    users: [User!]!
+        @can(ability: "show")
+        @paginate(type: "paginator")
+    user(id: ID @eq): User
+        @can(ability: "show")
+        @find
     me: User @auth
 }
 
 extend type Mutation @guard(with: ["api"]) {
     updateUser(input: UpdateUserInput! @spread): User!
-    deleteUser(id: ID!): User! @delete
+        @can(ability: "update")
+    deleteUser(id: ID!): User!
+        @can(ability: "delete")
+        @delete
+    updateProfile(input: UpdateProfileInput! @spread): User!
 }
 
 type User {
@@ -25,4 +33,9 @@ input UpdateUserInput @validator {
     name: String!
     email: String!
     roles: [String]
+}
+
+input UpdateProfileInput @validator {
+    name: String!
+    email: String!
 }
