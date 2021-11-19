@@ -1,0 +1,49 @@
+extend type Query @guard(with: ["api"]) {
+    roles: [Role!]!
+        @can(ability: "show", model: "Spatie\\Permission\\Models\\Role")
+        @all(model: "Spatie\\Permission\\Models\\Role")
+    role(id: ID @eq): Role
+        @can(ability: "show", model: "Spatie\\Permission\\Models\\Role")
+        @find(model: "Spatie\\Permission\\Models\\Role")
+    permissions: [Permission!]!
+        @can(ability: "show", model: "Spatie\\Permission\\Models\\Role")
+        @all(model: "Spatie\\Permission\\Models\\Permission")
+}
+
+extend type Mutation @guard(with: ["api"]) {
+    createRole(input: CreateRoleInput! @spread): Role!
+        @can(ability: "create", model: "Spatie\\Permission\\Models\\Role")
+    updateRole(input: UpdateRoleInput! @spread): Role!
+        @can(ability: "update", model: "Spatie\\Permission\\Models\\Role")
+    deleteRole(id: ID!): Role!
+        @can(ability: "delete", model: "Spatie\\Permission\\Models\\Role")
+        @delete(model: "Spatie\\Permission\\Models\\Role")
+}
+
+type Role {
+    id: ID!
+    name: String!
+    guard_name: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+    permissions: [Permission!]! @belongsToMany
+}
+
+type Permission {
+    id: ID!
+    name: String!
+    guard_name: String!
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+input CreateRoleInput @validator {
+    name: String!
+    permissions: [ID!]
+}
+
+input UpdateRoleInput @validator {
+    id: ID!
+    name: String!
+    permissions: [ID!]
+}
