@@ -89,7 +89,7 @@ class FillDefaultUserAndPermissions extends Migration
 
         $this->users = [
             [
-                'name' => 'Administrator',
+                'name' => $this->name,
                 'email' => $this->email,
                 'password' => Hash::make($this->password),
                 'created_at' => Carbon::now(),
