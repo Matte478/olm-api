@@ -16,7 +16,7 @@ class CreateDevicesTable extends Migration
         Schema::create('devices', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->foreignId('server_id')->constrained();
+            $table->foreignId('server_id')->constrained()->cascadeOnDelete();
             $table->foreignId('device_type_id')->constrained();
             $table->softDeletes();
             $table->timestamps();

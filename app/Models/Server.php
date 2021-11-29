@@ -21,6 +21,23 @@ class Server extends Model
         'enabled',
     ];
 
+    protected $attributes = [
+        'available' => false,
+        'production' => false,
+        'enabled' => false,
+    ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        self::deleting(function (Server $server) {
+            foreach ($server->devices as $device) {
+                $device->delete();
+            }
+        });
+    }
+
     // **************************** RELATIONS **************************** //
 
     public function devices(): HasMany

@@ -17,6 +17,7 @@ class FillPermissionsForServer extends Migration
             ['name' => 'server.create'],
             ['name' => 'server.update'],
             ['name' => 'server.delete'],
+            ['name' => 'server.sync'],
         ];
 
         //Role should already exists
@@ -28,6 +29,7 @@ class FillPermissionsForServer extends Migration
                     'server.create',
                     'server.update',
                     'server.delete',
+                    'server.sync',
                 ],
             ],
         ];
