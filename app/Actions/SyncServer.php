@@ -32,7 +32,7 @@ class SyncServer
                         'matlab',
                         'scilab'
                     ]
-                ]
+                ],
             ]
         ];
 

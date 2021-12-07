@@ -19,9 +19,22 @@ class SyncAllServers
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $servers = Server::all();
+        $args['trashed'] = $args['trashed'] ?? 'without';
+
+        switch ($args['trashed']) {
+            case 'with':
+                $servers = Server::withTrashed()->get();
+                break;
+            case 'only':
+                $servers = Server::onlyTrashed()->get();
+                break;
+            case 'without':
+            default:
+                $servers = Server::all();
+        }
 
         foreach ($servers as $server) {
+            if($server->trashed()) continue;
             app(\App\Actions\SyncServer::class)->execute($server);
         }
 

@@ -17,6 +17,7 @@ class FillPermissionsForServer extends Migration
             ['name' => 'server.create'],
             ['name' => 'server.update'],
             ['name' => 'server.delete'],
+            ['name' => 'server.restore'],
             ['name' => 'server.sync'],
         ];
 
@@ -29,6 +30,7 @@ class FillPermissionsForServer extends Migration
                     'server.create',
                     'server.update',
                     'server.delete',
+                    'server.restore',
                     'server.sync',
                 ],
             ],

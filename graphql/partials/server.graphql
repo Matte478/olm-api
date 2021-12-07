@@ -5,6 +5,7 @@ extend type Query @guard(with: ["api"]) {
         @all
     server(id: ID @eq): Server
         @can(ability: "show")
+        @softDeletes
         @find
 }
 
@@ -16,9 +17,13 @@ extend type Mutation @guard(with: ["api"]) {
     deleteServer(id: ID!): Server!
         @can(ability: "delete")
         @delete
+    restoreServer(id: ID!): Server!
+        @can(ability: "delete")
+        @restore
     syncServer(id: ID!): Server!
         @can(ability: "sync")
     syncAllServers: [Server!]!
+        @softDeletes
         @can(ability: "sync")
 }
 
