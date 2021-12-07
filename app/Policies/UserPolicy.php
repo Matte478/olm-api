@@ -9,11 +9,6 @@ class UserPolicy
 {
     use HandlesAuthorization;
 
-    public function index(User $user)
-    {
-        return $user->can('role.index');
-    }
-
     public function show(User $user)
     {
         return $user->can('user.show');
