@@ -1,9 +1,11 @@
 extend type Query @guard(with: ["api"]) {
     users: [User!]!
         @can(ability: "show")
+        @softDeletes
         @paginate(type: "paginator")
     user(id: ID @eq): User
         @can(ability: "show")
+        @softDeletes
         @find
     me: User @auth
 }
@@ -14,6 +16,9 @@ extend type Mutation @guard(with: ["api"]) {
     deleteUser(id: ID!): User!
         @can(ability: "delete")
         @delete
+    restoreUser(id: ID!): User!
+        @can(ability: "delete")
+        @restore
     updateProfile(input: UpdateProfileInput! @spread): User!
 }
 
@@ -23,6 +28,7 @@ type User {
     email: String!
     created_at: DateTime!
     updated_at: DateTime!
+    deleted_at: DateTime
     roles: [Role!]! @hasMany
 #    permissions: [Permission!]! @hasMany
     permissionsList: [String!]!

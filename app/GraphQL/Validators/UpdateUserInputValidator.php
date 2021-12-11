@@ -17,7 +17,7 @@ class UpdateUserInputValidator extends Validator
         return [
             'id' => [
                 'required',
-                'exists:users,id,deleted_at,NULL'
+                'exists:users,id'
             ],
             'name' => [
                 'required',

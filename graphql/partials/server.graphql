@@ -18,7 +18,7 @@ extend type Mutation @guard(with: ["api"]) {
         @can(ability: "delete")
         @delete
     restoreServer(id: ID!): Server!
-        @can(ability: "delete")
+        @can(ability: "restore")
         @restore
     syncServer(id: ID!): Server!
         @can(ability: "sync")

@@ -19,7 +19,7 @@ class UpdateUser
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $user = User::findOrFail($args['id']);
+        $user = User::withTrashed()->findOrFail($args['id']);
 
         $user->update([
             'name' => $args['name'],

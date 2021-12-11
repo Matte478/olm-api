@@ -29,6 +29,11 @@ class ServerPolicy
         return $user->can('server.delete');
     }
 
+    public function restore(User $user)
+    {
+        return $user->can('server.restore');
+    }
+
     public function sync(User $user)
     {
         return $user->can('server.sync');

@@ -33,6 +33,7 @@ class FillDefaultUserAndPermissions extends Migration
             'user.show',
             'user.update',
             'user.delete',
+            'user.restore',
 
             // roles
             'role.show',
