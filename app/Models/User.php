@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -56,8 +57,28 @@ class User extends Authenticatable
         'deleted_at'
     ];
 
+    // TODO: use https://github.com/michaeldyrynda/laravel-cascade-soft-deletes
+    public static function boot()
+    {
+        parent::boot();
+
+        self::deleting(function (User $user) {
+            foreach ($user->reservations as $reservation) {
+                $reservation->delete();
+            }
+        });
+    }
+
+
     public function getPermissionsListAttribute()
     {
         return $this->getAllPermissions()->pluck('name');
+    }
+
+    // **************************** RELATIONS **************************** //
+
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class);
     }
 }

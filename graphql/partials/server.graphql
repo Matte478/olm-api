@@ -13,7 +13,7 @@ extend type Mutation @guard(with: ["api"]) {
     createServer(input: CreateServerInput! @spread): Server!
         @can(ability: "create")
     updateServer(input: UpdateServerInput! @spread): Server!
-        @can(ability: "create")
+        @can(ability: "update")
     deleteServer(id: ID!): Server!
         @can(ability: "delete")
         @delete

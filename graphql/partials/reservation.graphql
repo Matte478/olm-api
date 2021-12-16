@@ -1,0 +1,41 @@
+extend type Query @guard(with: ["api"]) {
+    reservations: [Reservation!]!
+        @can(ability: "show")
+        @all
+    reservation(id: ID @eq): Reservation
+        @can(ability: "show")
+        @find
+}
+
+extend type Mutation @guard(with: ["api"]) {
+    createReservation(input: CreateReservationInput! @spread): Reservation!
+        @can(ability: "create")
+    updateReservation(input: UpdateReservationInput! @spread): Reservation!
+        @can(ability: "update", query: true)
+    deleteReservation(id: ID!): Reservation!
+        @can(ability: "delete")
+        @delete
+}
+
+type Reservation {
+    id: ID!
+    start: DateTime!
+    end: DateTime!
+    user: User! @hasOne
+    device: Device! @hasOne
+    created_at: DateTime!
+    updated_at: DateTime!
+}
+
+#@validator
+input CreateReservationInput {
+    device_id: ID!
+    start: DateTime!
+    end: DateTime!
+}
+
+input UpdateReservationInput {
+    id: ID!
+    start: DateTime!
+    end: DateTime!
+}
