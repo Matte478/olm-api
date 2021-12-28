@@ -1,5 +1,5 @@
 extend type Query @guard(with: ["api"]) {
-    servers: [Server!]!
+    servers(production: Boolean @eq): [Server!]!
         @can(ability: "show")
         @softDeletes
         @all
@@ -7,6 +7,9 @@ extend type Query @guard(with: ["api"]) {
         @can(ability: "show")
         @softDeletes
         @find
+#    TODO: permissions?
+    devices: [Device!]!
+        @all
 }
 
 extend type Mutation @guard(with: ["api"]) {
@@ -45,8 +48,11 @@ type Server {
 type Device {
     id: ID!
     name: String!
+    production: Boolean!
+    server: Server @belongsTo
     deviceType: DeviceType @belongsTo
     software: [Software!]! @belongsToMany
+    reservations: [Reservation!]! @hasMany
     created_at: DateTime!
     updated_at: DateTime!
     deleted_at: DateTime

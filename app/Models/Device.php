@@ -30,7 +30,17 @@ class Device extends Model
         });
     }
 
+    public function getProductionAttribute()
+    {
+        return $this->server->production;
+    }
+
     // **************************** RELATIONS **************************** //
+
+    public function server(): BelongsTo
+    {
+        return $this->belongsTo(Server::class);
+    }
 
     public function deviceType(): BelongsTo
     {

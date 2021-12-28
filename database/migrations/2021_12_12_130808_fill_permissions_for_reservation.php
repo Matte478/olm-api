@@ -16,7 +16,8 @@ class FillPermissionsForReservation extends Migration
         //New permissions
         $this->permissions = [
             ['name' => 'reservation.show'],
-            ['name' => 'reservation.create'],
+            ['name' => 'reservation.create_production'],
+            ['name' => 'reservation.create_all'],
             ['name' => 'reservation.update_own'],
             ['name' => 'reservation.update_all'],
             ['name' => 'reservation.delete_own'],
@@ -29,11 +30,30 @@ class FillPermissionsForReservation extends Migration
                 'name' => 'Administrator',
                 'permissions' => [
                     'reservation.show',
-                    'reservation.create',
+                    'reservation.create_production',
+                    'reservation.create_all',
                     'reservation.update_own',
                     'reservation.update_all',
                     'reservation.delete_own',
                     'reservation.delete_all',
+                ],
+            ],
+            [
+                'name' => 'Teacher',
+                'permissions' => [
+                    'reservation.show',
+                    'reservation.create_production',
+                    'reservation.update_own',
+                    'reservation.delete_own',
+                ],
+            ],
+            [
+                'name' => 'Student',
+                'permissions' => [
+                    'reservation.show',
+                    'reservation.create_production',
+                    'reservation.update_own',
+                    'reservation.delete_own',
                 ],
             ],
         ];
