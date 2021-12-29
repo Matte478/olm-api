@@ -22,6 +22,8 @@ class FillPermissionsForReservation extends Migration
             ['name' => 'reservation.update_all'],
             ['name' => 'reservation.delete_own'],
             ['name' => 'reservation.delete_all'],
+            ['name' => 'reservation.unlimited_time'],
+            ['name' => 'reservation.unlimited_count'],
         ];
 
         //Role should already exists
@@ -36,6 +38,8 @@ class FillPermissionsForReservation extends Migration
                     'reservation.update_all',
                     'reservation.delete_own',
                     'reservation.delete_all',
+                    'reservation.unlimited_time',
+                    'reservation.unlimited_count',
                 ],
             ],
             [

@@ -13,15 +13,18 @@ class ReservationValidationService
      */
     public function validate(Carbon $start, Carbon $end, int $deviceId, ?Reservation $reservation = null)
     {
-        $this->validateDeviceAvailability($start, $end, $deviceId, $reservation);
-        // TODO: permission for an unlimited reservation time
-        $this->validateMaxReservationTime($start, $end);
-        // TODO: permission for an unlimited count of reservations per day
-        $this->validateMaxReservationsPerUser($start, $reservation);
+        $user = auth()->user();
 
-        if($reservation) {
+        $this->validateDeviceAvailability($start, $end, $deviceId, $reservation);
+
+        if($user->cannot('reservation.unlimited_time'))
+            $this->validateMaxReservationTime($start, $end);
+
+        if($user->cannot('reservation.unlimited_count'))
+            $this->validateMaxReservationsPerUser($start, $reservation);
+
+        if($reservation)
             $this->validateUpdatePossibility($reservation);
-        }
     }
 
     /**
@@ -29,13 +32,47 @@ class ReservationValidationService
      */
     public function validateDeviceAvailability(Carbon $start, Carbon $end, int $deviceId, ?Reservation $reservation = null)
     {
-//        TODO: check maintenance reservation
+        $this->validateDeviceMaintenance($start, $end);
 
         $collisions = Reservation::collidingWith($start, $end, $deviceId, $reservation?->id)->get();
 
         if($collisions->count()) {
             throw new BusinessLogicException('The device is reserved in the selected time range.');
         }
+    }
+
+    /**
+     * @throws BusinessLogicException
+     */
+    public function validateDeviceMaintenance(Carbon $start, Carbon $end)
+    {
+        $maintenanceStart = config('reservation.daily_maintenance_start');
+        $maintenanceEnd = config('reservation.daily_maintenance_end');
+
+        $dailyMaintenanceStart = $start->copy()->startOfDay()
+            ->addHours($maintenanceStart['hours'])
+            ->addMinutes($maintenanceStart['minutes']);
+
+        $dailyMaintenanceEnd = $start->copy()->startOfDay()
+            ->addHours($maintenanceEnd['hours'])
+            ->addMinutes($maintenanceEnd['minutes']);
+
+        if(checkDatesOverlap($start, $end, $dailyMaintenanceStart, $dailyMaintenanceEnd))
+            throw new BusinessLogicException('The device is maintained at the selected time range.');
+
+        // the reservation ends on the same day
+        if($start->copy()->startOfDay()->eq($end->copy()->startOfDay())) return;
+
+        $dailyMaintenanceStart = $end->copy()->startOfDay()
+            ->addHours($maintenanceStart['hours'])
+            ->addMinutes($maintenanceStart['minutes']);
+
+        $dailyMaintenanceEnd = $end->copy()->startOfDay()
+            ->addHours($maintenanceEnd['hours'])
+            ->addMinutes($maintenanceEnd['minutes']);
+
+        if(checkDatesOverlap($start, $end, $dailyMaintenanceStart, $dailyMaintenanceEnd))
+            throw new BusinessLogicException('The device is maintained at the selected time range.');
     }
 
     /**
