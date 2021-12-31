@@ -1,5 +1,5 @@
 extend type Query @guard(with: ["api"]) {
-    servers: [Server!]!
+    servers(production: Boolean @eq, enabled: Boolean @eq): [Server!]!
         @can(ability: "show")
         @softDeletes
         @all
@@ -7,13 +7,16 @@ extend type Query @guard(with: ["api"]) {
         @can(ability: "show")
         @softDeletes
         @find
+    devices: [Device!]!
+        @can(ability: "show")
+        @all
 }
 
 extend type Mutation @guard(with: ["api"]) {
     createServer(input: CreateServerInput! @spread): Server!
         @can(ability: "create")
     updateServer(input: UpdateServerInput! @spread): Server!
-        @can(ability: "create")
+        @can(ability: "update")
     deleteServer(id: ID!): Server!
         @can(ability: "delete")
         @delete
@@ -45,11 +48,19 @@ type Server {
 type Device {
     id: ID!
     name: String!
+    production: Boolean!
+    server: Server @belongsTo
     deviceType: DeviceType @belongsTo
     software: [Software!]! @belongsToMany
+    reservations(start: DateTimeRange @whereBetween, end: DateTimeRange @whereBetween): [Reservation!]! @hasMany
     created_at: DateTime!
     updated_at: DateTime!
     deleted_at: DateTime
+}
+
+input DateTimeRange {
+    from: DateTime!
+    to: DateTime!
 }
 
 type DeviceType {

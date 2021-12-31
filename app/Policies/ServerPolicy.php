@@ -11,7 +11,7 @@ class ServerPolicy
 
     public function show(User $user)
     {
-        return $user->can('server.show');
+        return $user->canAny(['server.show', 'reservation.show']);
     }
 
     public function create(User $user)
