@@ -11,9 +11,9 @@ extend type Mutation @guard(with: ["api"]) {
     createReservation(input: CreateReservationInput! @spread): Reservation!
         @can(ability: "create", injectArgs: true)
     updateReservation(input: UpdateReservationInput! @spread): Reservation!
-        @can(ability: "update", query: true)
+        @can(ability: "update", find: "id")
     deleteReservation(id: ID!): Reservation!
-        @can(ability: "delete", query: true)
+        @can(ability: "delete", find: "id")
         @delete
 }
 

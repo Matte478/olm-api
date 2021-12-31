@@ -1,5 +1,5 @@
 extend type Query @guard(with: ["api"]) {
-    servers(production: Boolean @eq): [Server!]!
+    servers(production: Boolean @eq, enabled: Boolean @eq): [Server!]!
         @can(ability: "show")
         @softDeletes
         @all
@@ -7,8 +7,8 @@ extend type Query @guard(with: ["api"]) {
         @can(ability: "show")
         @softDeletes
         @find
-#    TODO: permissions?
     devices: [Device!]!
+        @can(ability: "show")
         @all
 }
 
@@ -52,10 +52,15 @@ type Device {
     server: Server @belongsTo
     deviceType: DeviceType @belongsTo
     software: [Software!]! @belongsToMany
-    reservations: [Reservation!]! @hasMany
+    reservations(start: DateTimeRange @whereBetween, end: DateTimeRange @whereBetween): [Reservation!]! @hasMany
     created_at: DateTime!
     updated_at: DateTime!
     deleted_at: DateTime
+}
+
+input DateTimeRange {
+    from: DateTime!
+    to: DateTime!
 }
 
 type DeviceType {
