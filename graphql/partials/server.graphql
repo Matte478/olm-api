@@ -10,6 +10,11 @@ extend type Query @guard(with: ["api"]) {
     devices: [Device!]!
         @can(ability: "show")
         @all
+    deviceTypes: [DeviceType!]!
+#    @can(ability: "show")
+        @all
+    software: [Software!]!
+        @all
 }
 
 extend type Mutation @guard(with: ["api"]) {

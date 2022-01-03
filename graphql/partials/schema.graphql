@@ -1,0 +1,76 @@
+extend type Query @guard(with: ["api"]) {
+    schemas: [Schema!]!
+        @can(ability: "show")
+        @all
+    schema(id: ID @eq): Schema
+        @can(ability: "show")
+        @find
+}
+
+extend type Mutation @guard(with: ["api"]) {
+    createSchema(input: CreateSchemaInput! @spread): Schema!
+        @can(ability: "create")
+    updateSchema(input: UpdateSchemaInput! @spread): Schema!
+        @can(ability: "update")
+    deleteSchema(id: ID!): Schema!
+        @can(ability: "delete")
+        @delete
+}
+
+type Schema {
+    id: ID!
+    name: String!
+    deviceType: DeviceType! @belongsTo
+    software: Software! @belongsTo
+    arguments: [Argument!]! @belongsToMany
+    note: String
+}
+
+type Argument {
+    id: ID!
+    name: String!
+    label: String!
+    default_value: Float
+    row: Int!
+    order: Int!
+    schema: Schema! @belongsTo
+    options: [Option]! @belongsToMany
+}
+
+type Option {
+    id: ID!
+    name: String!
+    value: Float!
+    argument: Argument! @belongsTo
+}
+
+input CreateSchemaInput @validator {
+    name: String!
+    device_type_id: ID!
+    software_id: ID!
+    note: String
+    arguments: [ArgumentInput!]
+}
+
+input UpdateSchemaInput @validator {
+    id: ID!
+    name: String!
+    device_type_id: ID!
+    software_id: ID!
+    note: String
+    arguments: [ArgumentInput!]
+}
+
+input ArgumentInput {
+    name: String!
+    label: String!
+    default_value: Float
+    row: Int
+    order: Int
+    options: [OptionInput!]
+}
+
+input OptionInput {
+    name: String!
+    value: Float!
+}
