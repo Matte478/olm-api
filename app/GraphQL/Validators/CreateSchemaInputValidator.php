@@ -29,6 +29,7 @@ class CreateSchemaInputValidator extends Validator
                 'exists:software,id',
             ],
             'note' => [
+                'nullable',
                 'string'
             ],
             'arguments' => [
@@ -62,6 +63,13 @@ class CreateSchemaInputValidator extends Validator
             'arguments.*.options.*.value' => [
                 'required',
                 'numeric',
+            ],
+            'schema' => [
+                'required',
+                'mimetypes:text/xml,application/octet-stream'
+            ],
+            'preview' => [
+                'mimetypes:image/jpg,image/jpeg,image/png',
             ],
         ];
     }

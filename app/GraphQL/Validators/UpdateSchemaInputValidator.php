@@ -33,6 +33,7 @@ class UpdateSchemaInputValidator extends Validator
                 'exists:software,id',
             ],
             'note' => [
+                'nullable',
                 'string'
             ],
             'arguments' => [
@@ -66,6 +67,12 @@ class UpdateSchemaInputValidator extends Validator
             'arguments.*.options.*.value' => [
                 'required',
                 'numeric',
+            ],
+            'schema' => [
+                'mimetypes:text/xml,application/octet-stream'
+            ],
+            'preview' => [
+                'mimetypes:image/jpg,image/jpeg,image/png',
             ],
         ];
     }

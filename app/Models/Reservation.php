@@ -24,7 +24,7 @@ class Reservation extends Model
         'end',
     ];
 
-    public function getTitleAttribute()
+    public function getTitleAttribute(): String
     {
         $startTime = $this->start->format('H:i');
         $endTime = $this->end->format('H:i');

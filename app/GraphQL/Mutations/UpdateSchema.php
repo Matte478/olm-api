@@ -22,6 +22,16 @@ class UpdateSchema
     {
         $schema = Schema::findOrFail($args['id']);
 
+        $schema->update($args);
+
+        if(isset($args['schema']) && $args['schema']->isValid()) {
+            $schema->addMedia($args['schema'])->toMediaCollection('schema');
+        }
+
+        if(isset($args['preview']) && $args['preview']->isValid()) {
+            $schema->addMedia($args['preview'])->toMediaCollection('preview');
+        }
+
         app(SyncSchemaArguments::class)->execute($schema, $args['arguments'] ?? []);
 
         return $schema;

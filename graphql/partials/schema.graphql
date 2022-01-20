@@ -24,6 +24,8 @@ type Schema {
     software: Software! @belongsTo
     arguments: [Argument!]! @belongsToMany
     note: String
+    schema: String
+    preview: String
 }
 
 type Argument {
@@ -50,6 +52,8 @@ input CreateSchemaInput @validator {
     software_id: ID!
     note: String
     arguments: [ArgumentInput!]
+    schema: Upload
+    preview: Upload
 }
 
 input UpdateSchemaInput @validator {
@@ -59,6 +63,8 @@ input UpdateSchemaInput @validator {
     software_id: ID!
     note: String
     arguments: [ArgumentInput!]
+    schema: Upload
+    preview: Upload
 }
 
 input ArgumentInput {
