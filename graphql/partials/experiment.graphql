@@ -1,0 +1,52 @@
+extend type Query @guard(with: ["api"]) {
+    experiments: [Experiment!]!
+#        @can(ability: "show")
+        @all
+    experiment(id: ID @eq): Experiment
+#        @can(ability: "show")
+        @find
+}
+
+extend type Mutation @guard(with: ["api"]) {
+    createUserExperiment(input: CreateUserExperimentInput! @spread): UserExperiment!
+#        @can(ability: "create", injectArgs: true)
+        @create
+}
+
+type Experiment {
+    id: ID!
+    server: Server! @belongsTo
+    deviceType: DeviceType! @belongsTo
+    device: Device @belongsTo
+    has_schema: Boolean
+    created_at: DateTime!
+    updated_at: DateTime!
+    deleted_at: DateTime
+}
+
+type UserExperiment {
+    id: ID!
+    user: User! @belongsTo
+    experiment: Experiment! @belongsTo
+    schema: Schema @belongsTo
+    input: String!
+    output: String!
+    note: String
+    simulation_time: Int!
+    sampling_rate: Int!
+    filled: Boolean!
+    created_at: DateTime!
+    updated_at: DateTime!
+    deleted_at: DateTime
+}
+
+
+input CreateUserExperimentInput @validator {
+    experiment_id: ID!
+    schema_id: ID
+    input: String!
+    output: String!
+    note: String
+    simulation_time: Int!
+    sampling_rate: Int!
+}

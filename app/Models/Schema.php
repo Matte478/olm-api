@@ -68,4 +68,9 @@ class Schema extends Model implements HasMedia
     {
         return $this->hasMany(Argument::class);
     }
+
+    public function userExperiments(): HasMany
+    {
+        return $this->hasMany(Experiment::class);
+    }
 }

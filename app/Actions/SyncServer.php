@@ -2,6 +2,8 @@
 
 namespace App\Actions;
 
+use App\Models\Device;
+use App\Models\Experiment;
 use Illuminate\Support\Facades\Log;
 use App\Models\Server;
 use App\Models\Software;
@@ -18,21 +20,107 @@ class SyncServer
         $response = [
             'devices' => [
                 [
-                    'name' => $server->name . ' test device',
-                    'type' => 'helicopter',
+                    'name' => $server->name . ' tos1a',
+                    'type' => 'tos1a',
+                    'output' => [
+                        [
+                            "name"  => 'temp_chip',
+                            "title" => "Chip temp"
+                        ],
+                        [
+                            "name"  => "f_temp_int",
+                            "title" => "Filtered internal temp"
+                        ]
+                    ],
                     'software' => [
-                        'matlab',
-                        'testovaci-typ'
+                        [
+                            'name' => 'matlab',
+                            'has_schema' => true,
+                            'commands' => [
+//                                https://github.com/Item21/olm_experiment_api/blob/master/config/devices/tos1a/matlab/input.php
+                                [
+                                    'name' => 'start',
+                                    'input' => [
+                                        [
+                                            "name"	=>	"reg_request",
+                                            "rules"	=>	"required",
+                                            "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
+                                            "placeholder" => 30,
+                                            "type"	=> "text"
+                                        ],
+                                        [
+                                            "name"	=>	"input_fan",
+                                            "rules"	=>	"required",
+                                            "title"	=>	"Napätie ventilátora (0-100)",
+                                            "placeholder" => 0,
+                                            "type"	=>	"text"
+                                        ]
+                                    ]
+                                ],
+                                [
+                                    'name' => 'change',
+                                    [
+                                        "name"	=>	"reg_request",
+                                        "rules"	=>	"required",
+                                        "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
+                                        "placeholder" => 30,
+                                        "type"	=>	"text"
+                                    ],
+                                    [
+                                        "name"	=>	"input_fan",
+                                        "rules"	=>	"required",
+                                        "title"	=>	"Napätie ventilátora (0-100)",
+                                        "placeholder" => 0,
+                                        "type"	=>	"text"
+                                    ]
+                                ],
+                            ]
+                        ],
+                        [
+                            'name' => 'openloop',
+                            'has_schema' => false,
+                            'commands' => [
+//                                https://github.com/Item21/olm_experiment_api/blob/master/config/devices/tos1a/matlab/input.php
+                                [
+                                    'name' => 'start',
+                                    'input' => [
+                                        [
+                                            "name"	=>	"reg_request",
+                                            "rules"	=>	"required",
+                                            "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
+                                            "placeholder" => 30,
+                                            "type"	=> "text"
+                                        ],
+                                        [
+                                            "name"	=>	"input_fan",
+                                            "rules"	=>	"required",
+                                            "title"	=>	"Napätie ventilátora (0-100)",
+                                            "placeholder" => 0,
+                                            "type"	=>	"text"
+                                        ]
+                                    ]
+                                ],
+                                [
+                                    'name' => 'change',
+                                    [
+                                        "name"	=>	"reg_request",
+                                        "rules"	=>	"required",
+                                        "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
+                                        "placeholder" => 30,
+                                        "type"	=>	"text"
+                                    ],
+                                    [
+                                        "name"	=>	"input_fan",
+                                        "rules"	=>	"required",
+                                        "title"	=>	"Napätie ventilátora (0-100)",
+                                        "placeholder" => 0,
+                                        "type"	=>	"text"
+                                    ]
+                                ],
+                            ]
+                        ],
                     ]
-                ],
-                [
-                    'name' => $server->name . ' test device 2',
-                    'type' => 'submarine',
-                    'software' => [
-                        'matlab',
-                        'scilab'
-                    ]
-                ],
+                ]
             ]
         ];
 
@@ -49,8 +137,11 @@ class SyncServer
                 if($localDevice->name === $remoteDevice['name']) {
                     if($localDevice->trashed()) $localDevice->restore();
 
+                    $this->syncExperiments($server, $localDevice, $remoteDevice['software'], $remoteDevice['output']);
+
+                    $softwareNames = $this->getSoftwareNames($remoteDevice['software']);
                     app(UpdateDevice::class)->execute(
-                        $localDevice, $remoteDevice, $this->getSoftwareIds($remoteDevice['software'])
+                        $localDevice, $remoteDevice, $this->getSoftwareIds($softwareNames)
                     );
 
                     unset($remoteDevices[$remoteKey]);
@@ -64,19 +155,52 @@ class SyncServer
 
         foreach ($remoteDevices as $remoteDevice) {
             $remoteDevice['server_id'] = $server->id;
-            app(CreateDevice::class)->execute(
-                $remoteDevice, $this->getSoftwareIds($remoteDevice['software'])
+            $softwareNames = $this->getSoftwareNames($remoteDevice['software']);
+
+            $localDevice = app(CreateDevice::class)->execute(
+                $remoteDevice, $this->getSoftwareIds($softwareNames)
             );
+
+            $this->syncExperiments($server, $localDevice, $remoteDevice['software'], $remoteDevice['output']);
         }
+    }
+
+    private function syncExperiments(Server $server, Device $device, array $software, array $output): void
+    {
+        $experimentsIds = [];
+        foreach ($software as $soft) {
+            $experimentsIds[] = app(SyncExperiment::class)->execute(
+                $server, $device, $this->getSoftware($soft['name']), $soft['commands'], $output,
+                $soft['has_schema'] ?? true
+            )->id;
+        }
+
+        Experiment::where([
+            ['server_id', $server->id],
+            ['device_id', $device->id]
+        ])->whereNotIn('id', $experimentsIds)->delete();
+    }
+
+    private function getSoftwareNames(array $software): array
+    {
+        return array_reduce($software, function($carry, $item) {
+            $carry[] = $item['name'];
+            return $carry;
+        }, []);
     }
 
     private function getSoftwareIds(array $softwareNames): array
     {
         $softwareIds = [];
         foreach ($softwareNames as $softwareName) {
-            array_push($softwareIds, Software::firstOrCreate(['name' => $softwareName])->id);
+            $softwareIds[] = $this->getSoftware($softwareName)->id;
         }
 
         return $softwareIds;
+    }
+
+    private function getSoftware(string $softwareName): Software
+    {
+        return Software::firstOrCreate(['name' => $softwareName]);
     }
 }

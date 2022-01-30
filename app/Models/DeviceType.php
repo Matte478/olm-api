@@ -20,4 +20,9 @@ class DeviceType extends Model
     {
         return $this->hasMany(Device::class);
     }
+
+    public function experiment(): HasMany
+    {
+        return $this->hasMany(Experiment::class);
+    }
 }

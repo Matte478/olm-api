@@ -5,35 +5,24 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Device extends Model
+class Experiment extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'name',
         'server_id',
         'device_type_id',
+        'device_id',
+        'software_id',
+        'commands',
+        'experiment_commands',
+        'output_arguments',
+        'has_schema',
+        'deleted_at'
     ];
-
-    public static function boot()
-    {
-        parent::boot();
-
-        self::deleting(function (Device $device) {
-            foreach ($device->reservations as $reservation) {
-                $reservation->delete();
-            }
-        });
-    }
-
-    public function getProductionAttribute()
-    {
-        return $this->server->production;
-    }
 
     // **************************** RELATIONS **************************** //
 
@@ -47,17 +36,17 @@ class Device extends Model
         return $this->belongsTo(DeviceType::class);
     }
 
-    public function software(): BelongsToMany
+    public function device(): BelongsTo
     {
-        return $this->belongsToMany(Software::class);
+        return $this->belongsTo(Device::class);
     }
 
-    public function reservations(): HasMany
+    public function software(): BelongsTo
     {
-        return $this->hasMany(Reservation::class);
+        return $this->belongsTo(Software::class);
     }
 
-    public function experiment(): HasMany
+    public function userExperiments(): HasMany
     {
         return $this->hasMany(Experiment::class);
     }
