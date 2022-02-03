@@ -20,6 +20,7 @@ class CreateUserExperimentInputValidator extends Validator
             ],
             'input' => [
                 'nullable',
+                'array'
             ],
             'output' => [
                 'nullable',

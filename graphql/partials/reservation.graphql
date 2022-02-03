@@ -5,6 +5,7 @@ extend type Query @guard(with: ["api"]) {
     reservation(id: ID @eq): Reservation
         @can(ability: "show")
         @find
+    reservationsCurrent: [Reservation!]!
 }
 
 extend type Mutation @guard(with: ["api"]) {

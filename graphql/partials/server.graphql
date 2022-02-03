@@ -54,8 +54,8 @@ type Device {
     id: ID!
     name: String!
     production: Boolean!
-    server: Server @belongsTo
-    deviceType: DeviceType @belongsTo
+    server: Server! @belongsTo
+    deviceType: DeviceType! @belongsTo
     software: [Software!]! @belongsToMany
     reservations(start: DateTimeRange @whereBetween, end: DateTimeRange @whereBetween): [Reservation!]! @hasMany
     created_at: DateTime!

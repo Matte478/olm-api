@@ -59,19 +59,28 @@ class SyncServer
                                 ],
                                 [
                                     'name' => 'change',
-                                    [
-                                        "name"	=>	"reg_request",
-                                        "rules"	=>	"required",
-                                        "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
-                                        "placeholder" => 30,
-                                        "type"	=>	"text"
-                                    ],
-                                    [
-                                        "name"	=>	"input_fan",
-                                        "rules"	=>	"required",
-                                        "title"	=>	"Napätie ventilátora (0-100)",
-                                        "placeholder" => 0,
-                                        "type"	=>	"text"
+                                    'input' => [
+                                        [
+                                            "name"	=>	"reg_request",
+                                            "rules"	=>	"required",
+                                            "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
+                                            "placeholder" => 30,
+                                            "type"	=>	"text"
+                                        ],
+                                        [
+                                            "name"	=>	"input_fan",
+                                            "rules"	=>	"required",
+                                            "title"	=>	"Napätie ventilátora (0-100)",
+                                            "placeholder" => 0,
+                                            "type"	=>	"text"
+                                        ],
+                                        [
+                                            "name"	=>	"input_led",
+                                            "rules"	=>	"required",
+                                            "title"	=>	"Napätie LED",
+                                            "placeholder" => 0,
+                                            "type"	=>	"text"
+                                        ]
                                     ]
                                 ],
                             ]
@@ -102,19 +111,42 @@ class SyncServer
                                 ],
                                 [
                                     'name' => 'change',
-                                    [
-                                        "name"	=>	"reg_request",
-                                        "rules"	=>	"required",
-                                        "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
-                                        "placeholder" => 30,
-                                        "type"	=>	"text"
-                                    ],
-                                    [
-                                        "name"	=>	"input_fan",
-                                        "rules"	=>	"required",
-                                        "title"	=>	"Napätie ventilátora (0-100)",
-                                        "placeholder" => 0,
-                                        "type"	=>	"text"
+                                    'input' => [
+                                        [
+                                            "name"	=>	"reg_request",
+                                            "rules"	=>	"required",
+                                            "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
+                                            "placeholder" => 30,
+                                            "type"	=>	"text"
+                                        ],
+                                        [
+                                            "name"	=>	"input_fan",
+                                            "rules"	=>	"required",
+                                            "title"	=>	"Napätie ventilátora (0-100)",
+                                            "placeholder" => 0,
+                                            "type"	=>	"text"
+                                        ],
+                                        [
+                                            "name"	=>	"reg_output",
+                                            "rules"	=>	"required",
+                                            "title"	=>	"Regulovaná veličina",
+                                            "placeholder"	=>	1,
+                                            "type"	=>	"select",
+                                            "values" => [
+                                                [
+                                                    "name" => "Teplota",
+                                                    "value"=> 1
+                                                ],
+                                                [
+                                                    "name" => "Svetlo",
+                                                    "value"=> 2
+                                                ],
+                                                [
+                                                    "name" => "Otacky",
+                                                    "value"=> 3
+                                                ]
+                                            ]
+                                        ]
                                     ]
                                 ],
                             ]

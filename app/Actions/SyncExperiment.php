@@ -13,9 +13,9 @@ class SyncExperiment
     {
         $experimentData = [
             'device_type_id' => $device->deviceType->id,
-            'commands' => json_encode($this->getCommandsNames($commands)),
-            'experiment_commands' => json_encode($commands),
-            'output_arguments' => json_encode($output),
+            'commands' => $this->getCommandsNames($commands),
+            'experiment_commands' => $this->formatCommands($commands),
+            'output_arguments' => $output,
             'has_schema' => $hasSchema,
             'deleted_at' => null
         ];
@@ -37,5 +37,46 @@ class SyncExperiment
             $carry[] = $item['name'];
             return $carry;
         }, []);
+    }
+
+    private function formatCommands(array $commands): array
+    {
+        $formattedCommands = [];
+        foreach ($commands as $command) {
+            $formattedCommands[] = [
+                'name' => $command['name'],
+                'arguments' => $this->formatArguments($command['input'])
+            ];
+        }
+
+        return $formattedCommands;
+    }
+
+    private function formatArguments(array $arguments): array
+    {
+        $formattedArguments = [];
+        foreach ($arguments as $arg) {
+            $formatted = [
+                'name' => $arg['name'],
+                'label' => $arg['title'],
+                'default_value' => $arg['placeholder'],
+            ];
+
+            if(isset($arg['values'])) {
+                $options = [];
+                foreach ($arg['values'] as $option) {
+                    $options[] = [
+                        'name' => $option['name'],
+                        'value' => $option['value'],
+                    ];
+                }
+
+                $formatted['options'] = $options;
+            }
+
+            $formattedArguments[] = $formatted;
+        }
+
+        return $formattedArguments;
     }
 }

@@ -1,5 +1,5 @@
 extend type Query @guard(with: ["api"]) {
-    schemas: [Schema!]!
+    schemas(device_type_id: ID @eq, software_id: ID @eq): [Schema!]!
         @can(ability: "show")
         @all
     schema(id: ID @eq): Schema

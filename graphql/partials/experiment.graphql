@@ -1,5 +1,5 @@
 extend type Query @guard(with: ["api"]) {
-    experiments: [Experiment!]!
+    experiments(server_id: ID @eq, device_id: ID @eq): [Experiment!]!
 #        @can(ability: "show")
         @all
     experiment(id: ID @eq): Experiment
@@ -10,7 +10,6 @@ extend type Query @guard(with: ["api"]) {
 extend type Mutation @guard(with: ["api"]) {
     createUserExperiment(input: CreateUserExperimentInput! @spread): UserExperiment!
 #        @can(ability: "create", injectArgs: true)
-        @create
 }
 
 type Experiment {
@@ -18,10 +17,30 @@ type Experiment {
     server: Server! @belongsTo
     deviceType: DeviceType! @belongsTo
     device: Device @belongsTo
+    software: Software! @belongsTo
+    commands: [String]!
+    experiment_commands: [ExperimentCommand]!
     has_schema: Boolean
     created_at: DateTime!
     updated_at: DateTime!
     deleted_at: DateTime
+}
+
+type ExperimentCommand {
+    name: String!
+    arguments: [ExperimentArgument!]!
+}
+
+type ExperimentArgument {
+    name: String!
+    label: String!
+    default_value: String
+    options: [Option!]
+}
+
+type Option {
+    name: String!
+    value: String!
 }
 
 type UserExperiment {
@@ -29,7 +48,7 @@ type UserExperiment {
     user: User! @belongsTo
     experiment: Experiment! @belongsTo
     schema: Schema @belongsTo
-    input: String!
+    input: [UserExperimentArgs!]!
     output: String!
     note: String
     simulation_time: Int!
@@ -40,12 +59,31 @@ type UserExperiment {
     deleted_at: DateTime
 }
 
+type UserExperimentArgs {
+    script_name: String!
+    input: [UserExperimentArg!]!
+}
+
+type UserExperimentArg {
+    name: String!
+    value: String!
+}
+
+input UserExperimentArgsInput {
+    script_name: String!
+    input: [UserExperimentArgInput!]!
+}
+
+input UserExperimentArgInput {
+    name: String!
+    value: String!
+}
 
 input CreateUserExperimentInput @validator {
     experiment_id: ID!
     schema_id: ID
-    input: String!
-    output: String!
+    input: [UserExperimentArgsInput!]!
+#    output: String!
     note: String
     simulation_time: Int!
     sampling_rate: Int!

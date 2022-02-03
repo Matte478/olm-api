@@ -24,6 +24,12 @@ class Experiment extends Model
         'deleted_at'
     ];
 
+    protected $casts = [
+        'commands' => 'array',
+        'experiment_commands' => 'array',
+        'output_arguments' => 'array'
+    ];
+
     // **************************** RELATIONS **************************** //
 
     public function server(): BelongsTo
