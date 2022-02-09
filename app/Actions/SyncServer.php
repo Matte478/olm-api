@@ -2,163 +2,36 @@
 
 namespace App\Actions;
 
+use App\Exceptions\BusinessLogicException;
 use App\Models\Device;
 use App\Models\Experiment;
+use GraphQL\Client;
+use GraphQL\Exception\QueryError;
+use GraphQL\Query;
 use Illuminate\Support\Facades\Log;
 use App\Models\Server;
 use App\Models\Software;
 
 class SyncServer
 {
+    protected Server $server;
+
+    /**
+     * @param Server $server
+     * @throws BusinessLogicException
+     */
     public function execute(Server $server): void
     {
+        $this->server = $server;
+
         Log::channel('server')->info("[Server ID: $server->id, IP: $server->ip_address] sync");
 
-        // TODO: sync server with experimental server
-
-        // example of response from experimental server
-        $response = [
-            'devices' => [
-                [
-                    'name' => $server->name . ' tos1a',
-                    'type' => 'tos1a',
-                    'output' => [
-                        [
-                            "name"  => 'temp_chip',
-                            "title" => "Chip temp"
-                        ],
-                        [
-                            "name"  => "f_temp_int",
-                            "title" => "Filtered internal temp"
-                        ]
-                    ],
-                    'software' => [
-                        [
-                            'name' => 'matlab',
-                            'has_schema' => true,
-                            'commands' => [
-//                                https://github.com/Item21/olm_experiment_api/blob/master/config/devices/tos1a/matlab/input.php
-                                [
-                                    'name' => 'start',
-                                    'input' => [
-                                        [
-                                            "name"	=>	"reg_request",
-                                            "rules"	=>	"required",
-                                            "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
-                                            "placeholder" => 30,
-                                            "type"	=> "text"
-                                        ],
-                                        [
-                                            "name"	=>	"input_fan",
-                                            "rules"	=>	"required",
-                                            "title"	=>	"Napätie ventilátora (0-100)",
-                                            "placeholder" => 0,
-                                            "type"	=>	"text"
-                                        ]
-                                    ]
-                                ],
-                                [
-                                    'name' => 'change',
-                                    'input' => [
-                                        [
-                                            "name"	=>	"reg_request",
-                                            "rules"	=>	"required",
-                                            "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
-                                            "placeholder" => 30,
-                                            "type"	=>	"text"
-                                        ],
-                                        [
-                                            "name"	=>	"input_fan",
-                                            "rules"	=>	"required",
-                                            "title"	=>	"Napätie ventilátora (0-100)",
-                                            "placeholder" => 0,
-                                            "type"	=>	"text"
-                                        ],
-                                        [
-                                            "name"	=>	"input_led",
-                                            "rules"	=>	"required",
-                                            "title"	=>	"Napätie LED",
-                                            "placeholder" => 0,
-                                            "type"	=>	"text"
-                                        ]
-                                    ]
-                                ],
-                            ]
-                        ],
-                        [
-                            'name' => 'openloop',
-                            'has_schema' => false,
-                            'commands' => [
-//                                https://github.com/Item21/olm_experiment_api/blob/master/config/devices/tos1a/matlab/input.php
-                                [
-                                    'name' => 'start',
-                                    'input' => [
-                                        [
-                                            "name"	=>	"reg_request",
-                                            "rules"	=>	"required",
-                                            "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
-                                            "placeholder" => 30,
-                                            "type"	=> "text"
-                                        ],
-                                        [
-                                            "name"	=>	"input_fan",
-                                            "rules"	=>	"required",
-                                            "title"	=>	"Napätie ventilátora (0-100)",
-                                            "placeholder" => 0,
-                                            "type"	=>	"text"
-                                        ]
-                                    ]
-                                ],
-                                [
-                                    'name' => 'change',
-                                    'input' => [
-                                        [
-                                            "name"	=>	"reg_request",
-                                            "rules"	=>	"required",
-                                            "title"	=>	"Žiadaná hodnota (C/lx/RPM)",
-                                            "placeholder" => 30,
-                                            "type"	=>	"text"
-                                        ],
-                                        [
-                                            "name"	=>	"input_fan",
-                                            "rules"	=>	"required",
-                                            "title"	=>	"Napätie ventilátora (0-100)",
-                                            "placeholder" => 0,
-                                            "type"	=>	"text"
-                                        ],
-                                        [
-                                            "name"	=>	"reg_output",
-                                            "rules"	=>	"required",
-                                            "title"	=>	"Regulovaná veličina",
-                                            "placeholder"	=>	1,
-                                            "type"	=>	"select",
-                                            "values" => [
-                                                [
-                                                    "name" => "Teplota",
-                                                    "value"=> 1
-                                                ],
-                                                [
-                                                    "name" => "Svetlo",
-                                                    "value"=> 2
-                                                ],
-                                                [
-                                                    "name" => "Otacky",
-                                                    "value"=> 3
-                                                ]
-                                            ]
-                                        ]
-                                    ]
-                                ],
-                            ]
-                        ],
-                    ]
-                ]
-            ]
-        ];
-
-        $server->update([
-            'available' => true
-        ]);
+        try {
+            $response = $this->getServerData();
+        } catch (BusinessLogicException $exception) {
+            $server->update(['available' => false]);
+            throw $exception;
+        }
 
         $localDevices = $server->devices()->withTrashed()->get();
         $remoteDevices = $response['devices'];
@@ -197,6 +70,13 @@ class SyncServer
         }
     }
 
+    /**
+     * @param Server $server
+     * @param Device $device
+     * @param array $software
+     * @param array $output
+     * @return void
+     */
     private function syncExperiments(Server $server, Device $device, array $software, array $output): void
     {
         $experimentsIds = [];
@@ -213,6 +93,10 @@ class SyncServer
         ])->whereNotIn('id', $experimentsIds)->delete();
     }
 
+    /**
+     * @param array $software
+     * @return array
+     */
     private function getSoftwareNames(array $software): array
     {
         return array_reduce($software, function($carry, $item) {
@@ -221,6 +105,10 @@ class SyncServer
         }, []);
     }
 
+    /**
+     * @param array $softwareNames
+     * @return array
+     */
     private function getSoftwareIds(array $softwareNames): array
     {
         $softwareIds = [];
@@ -231,8 +119,68 @@ class SyncServer
         return $softwareIds;
     }
 
+    /**
+     * @param string $softwareName
+     * @return Software
+     */
     private function getSoftware(string $softwareName): Software
     {
         return Software::firstOrCreate(['name' => $softwareName]);
+    }
+
+
+    /**
+     * @return array
+     * @throws BusinessLogicException
+     */
+    private function getServerData(): array
+    {
+        $url = 'https://' . $this->server->ip_address . '/graphql';
+
+        $gql = (new Query('SyncServer'))
+            ->setSelectionSet([
+                (new Query('devices'))
+                    ->setSelectionSet([
+                        'name',
+                        'type',
+                        (new Query('output'))
+                            ->setSelectionSet([
+                                'name',
+                                'title',
+                            ]),
+                        (new Query('software'))
+                            ->setSelectionSet([
+                                'name',
+                                'has_schema',
+                                (new Query('commands'))
+                                    ->setSelectionSet([
+                                        'name',
+                                        (new Query('input'))
+                                            ->setSelectionSet([
+                                                'name',
+                                                'rules',
+                                                'title',
+                                                'placeholder',
+                                                'type',
+                                            ]),
+                                    ])
+                            ])
+                    ])
+            ]);
+
+        try {
+            $client = new Client($url);
+            $results = $client->runQuery($gql, true)->getData()['SyncServer'];
+        } catch (QueryError $exception) {
+            $message = '[Server IP: ' . $this->server->ip_address . '] ERROR: ' . $exception->getErrorDetails()['message'];
+            Log::channel('server')->info($message);
+            throw new BusinessLogicException($message);
+        } catch (\Throwable $exception) {
+            $message = '[Server IP: ' . $this->server->ip_address . '] ERROR: ' . $exception->getMessage();
+            Log::channel('server')->info($message);
+            throw new BusinessLogicException($message);
+        }
+
+        return $results;
     }
 }
