@@ -32,7 +32,7 @@ type Argument {
     id: ID!
     name: String!
     label: String!
-    default_value: Float
+    default_value: String
     row: Int!
     order: Int!
     schema: Schema! @belongsTo
@@ -42,7 +42,7 @@ type Argument {
 type Option {
     id: ID!
     name: String!
-    value: Float!
+    value: String!
     argument: Argument! @belongsTo
 }
 
@@ -70,7 +70,7 @@ input UpdateSchemaInput @validator {
 input ArgumentInput {
     name: String!
     label: String!
-    default_value: Float
+    default_value: String
     row: Int
     order: Int
     options: [OptionInput!]
@@ -78,5 +78,5 @@ input ArgumentInput {
 
 input OptionInput {
     name: String!
-    value: Float!
+    value: String!
 }

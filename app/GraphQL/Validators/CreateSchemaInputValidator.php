@@ -45,7 +45,7 @@ class CreateSchemaInputValidator extends Validator
             ],
             'arguments.*.default_value' => [
                 'nullable',
-                'numeric',
+                'max:255',
             ],
             'arguments.*.row' => [
                 'integer',
@@ -62,7 +62,7 @@ class CreateSchemaInputValidator extends Validator
             ],
             'arguments.*.options.*.value' => [
                 'required',
-                'numeric',
+                'max:255',
             ],
             'schema' => [
                 'required',
