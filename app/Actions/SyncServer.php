@@ -33,6 +33,8 @@ class SyncServer
             throw $exception;
         }
 
+        $server->update(['available' => true]);
+
         $localDevices = $server->devices()->withTrashed()->get();
         $remoteDevices = $response['devices'];
 
@@ -135,7 +137,8 @@ class SyncServer
      */
     private function getServerData(): array
     {
-        $url = 'https://' . $this->server->ip_address . '/graphql';
+//        $url = 'https://' . $this->server->ip_address . ':' . $this->server->port . '/graphql';
+        $url = 'http://' . $this->server->ip_address . ':' . $this->server->port . '/graphql';
 
         $gql = (new Query('SyncServer'))
             ->setSelectionSet([

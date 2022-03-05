@@ -16,7 +16,8 @@ class CreateServersTable extends Migration
         Schema::create('servers', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
-            $table->ipAddress('ip_address')->unique();
+            $table->ipAddress('ip_address');
+            $table->string('domain')->unique();
             $table->unsignedInteger('port');
             $table->unsignedInteger('websocket_port');
             $table->boolean('available')->default(false);

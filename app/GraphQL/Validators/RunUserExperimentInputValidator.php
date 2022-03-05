@@ -4,7 +4,7 @@ namespace App\GraphQL\Validators;
 
 use Nuwave\Lighthouse\Validation\Validator;
 
-class CreateUserExperimentInputValidator extends Validator
+class RunUserExperimentInputValidator extends Validator
 {
     /**
      * Return the validation rules.
@@ -21,6 +21,10 @@ class CreateUserExperimentInputValidator extends Validator
             'input' => [
                 'nullable',
                 'array'
+            ],
+            'software_id' => [
+                'required',
+                'exists:software,id',
             ],
             'output' => [
                 'nullable',

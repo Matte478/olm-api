@@ -8,7 +8,7 @@ extend type Query @guard(with: ["api"]) {
 }
 
 extend type Mutation @guard(with: ["api"]) {
-    createUserExperiment(input: CreateUserExperimentInput! @spread): UserExperiment!
+    runUserExperiment(input: RunUserExperimentInput! @spread): String
 #        @can(ability: "create", injectArgs: true)
 }
 
@@ -79,10 +79,11 @@ input UserExperimentArgInput {
     value: String!
 }
 
-input CreateUserExperimentInput @validator {
+input RunUserExperimentInput @validator {
     experiment_id: ID!
     schema_id: ID
     input: [UserExperimentArgsInput!]!
+    software_id: ID!
 #    output: String!
     note: String
     simulation_time: Int!

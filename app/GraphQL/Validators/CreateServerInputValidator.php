@@ -21,8 +21,12 @@ class CreateServerInputValidator extends Validator
             ],
             'ip_address' => [
                 'required',
+                'max:255'
+            ],
+            'domain' => [
+                'required',
                 'max:255',
-                'unique:servers,ip_address'
+                'unique:servers,domain'
             ],
             'port' => [
                 'required',

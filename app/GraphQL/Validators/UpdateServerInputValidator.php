@@ -27,7 +27,11 @@ class UpdateServerInputValidator extends Validator
             'ip_address' => [
                 'required',
                 'max:255',
-                Rule::unique('servers', 'ip_address')->ignore($this->arg('id'), 'id')
+            ],
+            'domain' => [
+                'required',
+                'max:255',
+                Rule::unique('servers', 'domain')->ignore($this->arg('id'), 'id')
             ],
             'port' => [
                 'required',

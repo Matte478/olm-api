@@ -39,6 +39,7 @@ type Server {
     id: ID!
     name: String!
     ip_address: String!
+    domain: String!
     port: Int!
     websocket_port: Int!
     available: Boolean!
@@ -86,6 +87,7 @@ type Software {
 input CreateServerInput @validator {
     name: String!
     ip_address: String!
+    domain: String!
     port: Int!
     websocket_port: Int!
     production: Boolean!
@@ -96,6 +98,7 @@ input UpdateServerInput @validator {
     id: ID!
     name: String!
     ip_address: String!
+    domain: String!
     port: Int!
     websocket_port: Int!
     production: Boolean!
