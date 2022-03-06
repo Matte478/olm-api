@@ -130,15 +130,14 @@ class SyncServer
         return Software::firstOrCreate(['name' => $softwareName]);
     }
 
-
     /**
      * @return array
      * @throws BusinessLogicException
      */
     private function getServerData(): array
     {
-//        $url = 'https://' . $this->server->ip_address . ':' . $this->server->port . '/graphql';
-        $url = 'http://' . $this->server->ip_address . ':' . $this->server->port . '/graphql';
+        $url = 'http://api.' . $this->server->domain . ':' . $this->server->port . '/graphql';
+//        $url = 'http://' . $this->server->ip_address . ':' . $this->server->port . '/graphql';
 
         $gql = (new Query('SyncServer'))
             ->setSelectionSet([

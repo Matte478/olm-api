@@ -26,20 +26,24 @@ class RunUserExperimentInputValidator extends Validator
                 'required',
                 'exists:software,id',
             ],
-            'output' => [
-                'nullable',
+            'schema_id' => [
+                'required',
+                'exists:schemas,id',
             ],
+//            'output' => [
+//                'nullable',
+//            ],
             'note' => [
                 'nullable',
             ],
-            'simulation_time' => [
-                'nullable',
-                'integer',
-            ],
-            'sampling_rate' => [
-                'nullable',
-                'integer',
-            ],
+//            'simulation_time' => [
+//                'nullable',
+//                'integer',
+//            ],
+//            'sampling_rate' => [
+//                'nullable',
+//                'integer',
+//            ],
         ];
     }
 }

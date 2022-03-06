@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -21,7 +23,25 @@ class UserExperiment extends Model
         'simulation_time',
         'sampling_rate',
         'filled',
+        'remote_id'
     ];
+
+    protected $casts = [
+        'input' => 'array',
+        'output' => 'array',
+    ];
+
+    // **************************** SCOPES **************************** //
+
+    public function scopeUnfilled(Builder $query, ?bool $forAuthUser = true): Builder
+    {
+        if($forAuthUser) $query->where('user_id', auth()->user()->id);
+
+        return $query->where([
+            ['filled', false],
+            ['deleted_at', null]
+        ]);
+    }
 
     // **************************** RELATIONS **************************** //
 

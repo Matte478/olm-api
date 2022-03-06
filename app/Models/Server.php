@@ -14,6 +14,7 @@ class Server extends Model
     protected $fillable = [
         'name',
         'ip_address',
+        'domain',
         'port',
         'websocket_port',
         'available',

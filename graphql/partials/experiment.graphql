@@ -5,10 +5,11 @@ extend type Query @guard(with: ["api"]) {
     experiment(id: ID @eq): Experiment
 #        @can(ability: "show")
         @find
+    userExperimentsCurrent: [UserExperiment!]!
 }
 
 extend type Mutation @guard(with: ["api"]) {
-    runUserExperiment(input: RunUserExperimentInput! @spread): String
+    runUserExperiment(input: RunUserExperimentInput! @spread): UserExperiment
 #        @can(ability: "create", injectArgs: true)
 }
 
@@ -49,7 +50,7 @@ type UserExperiment {
     experiment: Experiment! @belongsTo
     schema: Schema @belongsTo
     input: [UserExperimentArgs!]!
-    output: String!
+    output: String
     note: String
     simulation_time: Int!
     sampling_rate: Int!
@@ -86,6 +87,6 @@ input RunUserExperimentInput @validator {
     software_id: ID!
 #    output: String!
     note: String
-    simulation_time: Int!
-    sampling_rate: Int!
+#    simulation_time: Int!
+#    sampling_rate: Int!
 }

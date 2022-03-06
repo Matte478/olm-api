@@ -19,11 +19,12 @@ class CreateUserExperimentsTable extends Migration
             $table->foreignId('experiment_id')->constrained()->cascadeOnDelete();
             $table->foreignId('schema_id')->nullable()->constrained();
             $table->json('input');
-            $table->json('output');
+            $table->json('output')->nullable();
             $table->text('note')->nullable();
             $table->integer('simulation_time');
             $table->integer('sampling_rate');
             $table->boolean('filled')->default(false);
+            $table->integer('remote_id');
             $table->softDeletes();
             $table->timestamps();
         });
