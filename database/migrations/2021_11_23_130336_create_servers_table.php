@@ -17,7 +17,7 @@ class CreateServersTable extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->ipAddress('ip_address');
-            $table->string('domain')->unique();
+            $table->string('api_domain')->unique();
             $table->unsignedInteger('port');
             $table->unsignedInteger('websocket_port');
             $table->boolean('available')->default(false);

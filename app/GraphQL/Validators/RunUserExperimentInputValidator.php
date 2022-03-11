@@ -14,6 +14,9 @@ class RunUserExperimentInputValidator extends Validator
     public function rules(): array
     {
         return [
+            'user_experiment_id' => [
+                'exists:user_experiments,id',
+            ],
             'experiment_id' => [
                 'required',
                 'exists:experiments,id,deleted_at,NULL',
@@ -27,7 +30,7 @@ class RunUserExperimentInputValidator extends Validator
                 'exists:software,id',
             ],
             'schema_id' => [
-                'required',
+//                'required',
                 'exists:schemas,id',
             ],
 //            'output' => [
@@ -36,14 +39,6 @@ class RunUserExperimentInputValidator extends Validator
             'note' => [
                 'nullable',
             ],
-//            'simulation_time' => [
-//                'nullable',
-//                'integer',
-//            ],
-//            'sampling_rate' => [
-//                'nullable',
-//                'integer',
-//            ],
         ];
     }
 }

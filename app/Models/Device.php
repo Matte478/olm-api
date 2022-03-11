@@ -17,6 +17,7 @@ class Device extends Model
         'name',
         'server_id',
         'device_type_id',
+        'remote_id'
     ];
 
     public static function boot()

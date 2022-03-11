@@ -39,7 +39,7 @@ type Server {
     id: ID!
     name: String!
     ip_address: String!
-    domain: String!
+    api_domain: String!
     port: Int!
     websocket_port: Int!
     available: Boolean!
@@ -57,6 +57,7 @@ type Device {
     production: Boolean!
     server: Server! @belongsTo
     deviceType: DeviceType! @belongsTo
+    remote_id: ID!
     software: [Software!]! @belongsToMany
     reservations(start: DateTimeRange @whereBetween, end: DateTimeRange @whereBetween): [Reservation!]! @hasMany
     created_at: DateTime!
@@ -87,7 +88,7 @@ type Software {
 input CreateServerInput @validator {
     name: String!
     ip_address: String!
-    domain: String!
+    api_domain: String!
     port: Int!
     websocket_port: Int!
     production: Boolean!
@@ -98,7 +99,7 @@ input UpdateServerInput @validator {
     id: ID!
     name: String!
     ip_address: String!
-    domain: String!
+    api_domain: String!
     port: Int!
     websocket_port: Int!
     production: Boolean!

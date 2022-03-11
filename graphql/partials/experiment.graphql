@@ -81,6 +81,7 @@ input UserExperimentArgInput {
 }
 
 input RunUserExperimentInput @validator {
+    user_experiment_id: ID
     experiment_id: ID!
     schema_id: ID
     input: [UserExperimentArgsInput!]!

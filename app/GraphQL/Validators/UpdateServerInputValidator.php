@@ -28,10 +28,10 @@ class UpdateServerInputValidator extends Validator
                 'required',
                 'max:255',
             ],
-            'domain' => [
+            'api_domain' => [
                 'required',
                 'max:255',
-                Rule::unique('servers', 'domain')->ignore($this->arg('id'), 'id')
+                Rule::unique('servers', 'api_domain')->ignore($this->arg('id'), 'id')
             ],
             'port' => [
                 'required',

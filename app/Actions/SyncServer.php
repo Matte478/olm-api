@@ -136,13 +136,13 @@ class SyncServer
      */
     private function getServerData(): array
     {
-        $url = 'http://api.' . $this->server->domain . ':' . $this->server->port . '/graphql';
-//        $url = 'http://' . $this->server->ip_address . ':' . $this->server->port . '/graphql';
+        $url = 'https://' . $this->server->api_domain . ':' . $this->server->port . '/graphql';
 
         $gql = (new Query('SyncServer'))
             ->setSelectionSet([
                 (new Query('devices'))
                     ->setSelectionSet([
+                        'id',
                         'name',
                         'type',
                         (new Query('output'))

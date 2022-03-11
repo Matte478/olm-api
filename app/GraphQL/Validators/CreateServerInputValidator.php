@@ -23,10 +23,10 @@ class CreateServerInputValidator extends Validator
                 'required',
                 'max:255'
             ],
-            'domain' => [
+            'api_domain' => [
                 'required',
                 'max:255',
-                'unique:servers,domain'
+                'unique:servers,api_domain'
             ],
             'port' => [
                 'required',

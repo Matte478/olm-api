@@ -18,7 +18,10 @@ use App\Models\Software;
 
 class RunExperimentScript
 {
-    public function execute(Experiment $experiment, string $scriptName, array $inputs, Software $software, ?Schema $schema = null)
+    public function execute(
+        Experiment $experiment, string $scriptName, array $inputs, Software $software,
+        ?Schema $schema = null, ?UserExperiment $userExperiment = null
+    ): UserExperiment
     {
         $user = auth()->user();
         $device = $experiment->device;
@@ -26,6 +29,7 @@ class RunExperimentScript
         $server = $experiment->server;
 
         app(UserExperimentValidationService::class)->validate($device->id);
+        // TODO: check if user changed experiment / schema in runtime
 
         $schemaName = null;
         if($schema) {
@@ -34,20 +38,19 @@ class RunExperimentScript
             $schemaName = $uploadResponse['name'];
         }
 
-        $url = 'http://' . $server->ip_address . ':' . $server->port . '/graphql';
+        $url = 'https://' . $server->api_domain . ':' . $server->port . '/graphql';
 
-        // TODO: device ID
         $mutation = (new Mutation('RunScript'))
             ->setArguments([
                 'runScriptInput' => new RawObject(
                     '{
-                        scriptName: "' . $scriptName . '",
-                        inputParameter: "' . $this->getInputString($inputs) . '",
-                        fileName: "' . $schemaName . '"
+                        scriptName: "'. $scriptName .'",
+                        inputParameter: "'. $this->getInputString($inputs) .'",
+                        fileName: "'. $schemaName .'"
                         device: {
-                            deviceName: "' . $deviceType->name . '",
-                            software: "' . $software->name . '",
-                            deviceID: "2"
+                            deviceName: "'. $deviceType->name .'",
+                            software: "'. $software->name .'",
+                            deviceID: "'. $device->remote_id .'"
                         }
                     }'
                 )
@@ -69,24 +72,31 @@ class RunExperimentScript
             throw new BusinessLogicException($message);
         }
 
-        $userExperiment = null;
         if($result['output'] == 'success') {
+            // TODO remote id
             if(!isset($result['id']))
                 $result['id'] = 1;
 
-            $simulationTime = (int) $this->getInputValue($inputs,'t_sim');
-            $samplingRate = (int) $this->getInputValue($inputs,'s_rate');
+            $simulationTime = (int) $this->getInputValue($inputs, 't_sim');
+            $samplingRate = (int) $this->getInputValue($inputs, 's_rate');
 
-            $userExperiment = UserExperiment::create([
-                'user_id' => $user->id,
-                'experiment_id' => $experiment->id,
-                'schema_id' => $schema?->id,
-                'input' => $inputs,
-                'simulation_time' => $simulationTime,
-                'sampling_rate' => $samplingRate,
-                'filled' => false,
-                'remote_id' => (int) $result['id'],
-            ]);
+            if($userExperiment) {
+                dd($userExperiment->input, $inputs);
+                $userExperiment->update([
+
+                ]);
+            } else {
+                $userExperiment = UserExperiment::create([
+                    'user_id' => $user->id,
+                    'experiment_id' => $experiment->id,
+                    'schema_id' => $schema?->id,
+                    'input' => $inputs,
+                    'simulation_time' => $simulationTime,
+                    'sampling_rate' => $samplingRate,
+                    'filled' => false,
+                    'remote_id' => (int) $result['id'],
+                ]);
+            }
         }
 
         return $userExperiment;
@@ -129,7 +139,7 @@ class RunExperimentScript
      */
     private function uploadSchema(string $filePath, Server $server): array
     {
-        $guzzleClient = new \GuzzleHttp\Client(['base_uri' => 'http://api.' . $server->domain . ':' . $server->port]);
+        $guzzleClient = new \GuzzleHttp\Client(['base_uri' => 'https://' . $server->api_domain . ':' . $server->port]);
         $response = $guzzleClient->request('POST', '/api/schema/upload', [
             'headers' => [
                 'Accept' => 'application/json',
