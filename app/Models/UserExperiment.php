@@ -41,12 +41,12 @@ class UserExperiment extends Model implements HasMedia
 
     // **************************** SCOPES **************************** //
 
-    public function scopeUnfilled(Builder $query, ?bool $forAuthUser = true): Builder
+    public function scopeUnfinished(Builder $query, ?bool $forAuthUser = true): Builder
     {
         if($forAuthUser) $query->where('user_id', auth()->user()->id);
 
         return $query->where([
-            ['filled', false],
+            ['filled', null],
             ['deleted_at', null]
         ]);
     }

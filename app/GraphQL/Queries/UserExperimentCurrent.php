@@ -2,6 +2,7 @@
 
 namespace App\GraphQL\Queries;
 
+use App\Actions\SyncUserExperiment;
 use App\Models\Reservation;
 use App\Models\UserExperiment;
 use GraphQL\Type\Definition\ResolveInfo;
@@ -24,12 +25,13 @@ class UserExperimentCurrent
 
         if(!$reservation) return null;
 
-        $unfilled = UserExperiment::unfilled()->filterDevice($reservation->device_id)->get();
+        $unfilled = UserExperiment::unfinished()->filterDevice($reservation->device_id)->get();
 
         foreach ($unfilled as $userExperiment) {
             // TODO: sync with experimental server and check experiment status
+            app(SyncUserExperiment::class)->execute($userExperiment);
         }
 
-        return UserExperiment::unfilled()->filterDevice($reservation->device_id)->first();
+        return UserExperiment::unfinished()->filterDevice($reservation->device_id)->first();
     }
 }

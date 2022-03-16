@@ -69,7 +69,7 @@ type UserExperiment {
     note: String
     simulation_time: Int!
     sampling_rate: Int!
-    filled: Boolean!
+    filled: Boolean
     created_at: DateTime!
     updated_at: DateTime!
     deleted_at: DateTime

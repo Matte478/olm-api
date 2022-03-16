@@ -23,7 +23,7 @@ class CreateUserExperimentsTable extends Migration
             $table->text('note')->nullable();
             $table->integer('simulation_time');
             $table->integer('sampling_rate');
-            $table->boolean('filled')->default(false);
+            $table->boolean('filled')->nullable();
             $table->integer('remote_id');
             $table->softDeletes();
             $table->timestamps();
