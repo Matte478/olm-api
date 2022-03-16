@@ -17,7 +17,7 @@ extend type Mutation @guard(with: ["api"]) {
         @can(ability: "delete")
         @delete
     restoreUser(id: ID!): User!
-        @can(ability: "delete")
+        @can(ability: "restore")
         @restore
     updateProfile(input: UpdateProfileInput! @spread): User!
 }

@@ -80,23 +80,22 @@ class RunExperimentScript
             $simulationTime = (int) $this->getInputValue($inputs, 't_sim');
             $samplingRate = (int) $this->getInputValue($inputs, 's_rate');
 
-            if($userExperiment) {
-                dd($userExperiment->input, $inputs);
+            if($userExperiment)
                 $userExperiment->update([
-
+                    'input' => $this->getInputArray($scriptName, $inputs, $userExperiment->input),
+                    'filled' => false,
                 ]);
-            } else {
+            else
                 $userExperiment = UserExperiment::create([
                     'user_id' => $user->id,
                     'experiment_id' => $experiment->id,
                     'schema_id' => $schema?->id,
-                    'input' => $inputs,
+                    'input' => $this->getInputArray($scriptName, $inputs),
                     'simulation_time' => $simulationTime,
                     'sampling_rate' => $samplingRate,
                     'filled' => false,
                     'remote_id' => (int) $result['id'],
                 ]);
-            }
         }
 
         return $userExperiment;
@@ -114,6 +113,23 @@ class RunExperimentScript
         }
 
         return substr($result, 0, -1) ;
+    }
+
+    /**
+     * @param string $command
+     * @param array $actualInputs
+     * @param array|null $previousInputs
+     * @return array
+     */
+    public function getInputArray(string $command, array $actualInputs, ?array $previousInputs = []): array
+    {
+        $result = $previousInputs;
+
+        if(!isset($result[$command]))
+            $result[$command] = [];
+        $result[$command][] = $actualInputs;
+
+        return $result;
     }
 
     /**
