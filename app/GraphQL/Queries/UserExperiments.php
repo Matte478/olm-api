@@ -3,12 +3,11 @@
 namespace App\GraphQL\Queries;
 
 use App\Actions\SyncUserExperiment;
-use App\Models\Reservation;
 use App\Models\UserExperiment;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-class UserExperimentCurrent
+class UserExperiments
 {
     /**
      * Return a value for the field.
@@ -21,16 +20,12 @@ class UserExperimentCurrent
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $reservation = Reservation::current()->first();
-
-        if(!$reservation) return null;
-
-        $unfinished = UserExperiment::unfinished()->filterDevice($reservation->device_id)->get();
+        $unfinished = UserExperiment::unfinished(false)->get();
 
         foreach ($unfinished as $userExperiment) {
             app(SyncUserExperiment::class)->execute($userExperiment);
         }
 
-        return UserExperiment::unfinished()->filterDevice($reservation->device_id)->first();
+        return UserExperiment::query();
     }
 }
