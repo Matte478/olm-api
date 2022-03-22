@@ -5,29 +5,30 @@ extend type Query @guard(with: ["api"]) {
     experiment(id: ID @eq): Experiment
 #        @can(ability: "show")
         @find
-    userExperiments(orderBy: _ @orderBy(columns: ["created_at", "filled"])): [UserExperiment!]!
-#        @can(ability: "show")
+    userExperiments(orderBy: _ @orderBy(columns: ["created_at", "filled"]), onlyMine: Boolean): [UserExperiment!]!
+        @can(ability: "show", injectArgs: true, model: "App\\Models\\UserExperiment")
         @softDeletes
         @paginate(type: "paginator", builder: "App\\GraphQL\\Queries\\UserExperiments")
     userExperiment(id: ID @eq): UserExperiment
-#        @can(ability: "show")
+        @can(ability: "show", injectArgs: true, find: "id")
         @softDeletes
         @find
     userExperimentCurrent: UserExperiment
+        @can(ability: "create")
 }
 
 extend type Mutation @guard(with: ["api"]) {
     runUserExperiment(input: RunUserExperimentInput! @spread): UserExperiment
-#        @can(ability: "create", injectArgs: true)
+        @can(ability: "create")
+    updateUserExperiment(input: UpdateUserExperimentInput @spread): UserExperiment!
+        @can(ability: "update", find: "id")
+        @update
     deleteUserExperiment(id: ID!): UserExperiment!
-#        @can(ability: "delete")
+        @can(ability: "delete", find: "id")
         @delete
     restoreUserExperiment(id: ID!): UserExperiment!
-#        @can(ability: "delete")
+        @can(ability: "restore", find: "id")
         @restore
-    updateUserExperiment(input: UpdateUserExperimentInput @spread): UserExperiment!
-#        @can(ability: "update")
-        @update
 }
 
 type Experiment {

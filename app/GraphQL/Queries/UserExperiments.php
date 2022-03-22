@@ -26,6 +26,11 @@ class UserExperiments
             app(SyncUserExperiment::class)->execute($userExperiment);
         }
 
-        return UserExperiment::query();
+        $query = UserExperiment::query();
+
+        if($args['onlyMine'])
+            $query->where('user_id', auth()->user()->id);
+
+        return $query;
     }
 }
