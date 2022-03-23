@@ -22,26 +22,26 @@ class UserExperimentPolicy
         return $user->canAny(['user_experiment.show_own', 'user_experiment.show_all']);
     }
 
-    public function create(User $user)
+    public function create(User $user): bool
     {
         return $user->can('user_experiment.create');
     }
 
-    public function update(User $user, UserExperiment $userExperiment)
+    public function update(User $user, UserExperiment $userExperiment): bool
     {
         return $user->can('user_experiment.update_all') ||
-            ($user->can('user_experiment.update_own') && $userExperiment->id === $user->id);
+            ($user->can('user_experiment.update_own') && $userExperiment->user_id === $user->id);
     }
 
-    public function delete(User $user, UserExperiment $userExperiment)
+    public function delete(User $user, UserExperiment $userExperiment): bool
     {
         return $user->can('user_experiment.delete_all') ||
-            ($user->can('user_experiment.delete_own') && $userExperiment->id === $user->id);
+            ($user->can('user_experiment.delete_own') && $userExperiment->user_id === $user->id);
     }
 
-    public function restore(User $user, UserExperiment $userExperiment)
+    public function restore(User $user, UserExperiment $userExperiment): bool
     {
         return $user->can('user_experiment.restore_all') ||
-            ($user->can('user_experiment.restore_own') && $userExperiment->id === $user->id);
+            ($user->can('user_experiment.restore_own') && $userExperiment->user_id === $user->id);
     }
 }
