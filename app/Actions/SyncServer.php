@@ -29,7 +29,10 @@ class SyncServer
         try {
             $response = $this->getServerData();
         } catch (BusinessLogicException $exception) {
-            $server->update(['available' => false]);
+            $server->update([
+                'available' => false,
+                'enabled' => false,
+            ]);
             throw $exception;
         }
 
