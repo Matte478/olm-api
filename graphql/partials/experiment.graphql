@@ -66,9 +66,9 @@ type UserExperiment {
     id: ID!
     user: User! @belongsTo
     experiment: Experiment! @belongsTo
-    schema: Schema @belongsTo
+    schema: Schema @belongsTo @softDeletes
     input: [UserExperimentInput!]!
-    output: [UserExperimentOutput!]!
+    output: [UserExperimentOutput!]
     result: String
     note: String
     simulation_time: Int!

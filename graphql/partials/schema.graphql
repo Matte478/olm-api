@@ -1,9 +1,11 @@
 extend type Query @guard(with: ["api"]) {
     schemas(device_type_id: ID @eq, software_id: ID @eq): [Schema!]!
         @can(ability: "show")
+        @softDeletes
         @all
     schema(id: ID @eq): Schema
         @can(ability: "show")
+        @softDeletes
         @find
 }
 
@@ -15,6 +17,9 @@ extend type Mutation @guard(with: ["api"]) {
     deleteSchema(id: ID!): Schema!
         @can(ability: "delete")
         @delete
+    restoreSchema(id: ID!): Schema!
+        @can(ability: "restore")
+        @restore
 }
 
 type Schema {
@@ -26,6 +31,9 @@ type Schema {
     note: String
     schema: String
     preview: String
+    created_at: DateTime!
+    updated_at: DateTime!
+    deleted_at: DateTime
 }
 
 type Argument {

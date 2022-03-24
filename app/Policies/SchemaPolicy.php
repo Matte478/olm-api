@@ -28,4 +28,9 @@ class SchemaPolicy
     {
         return $user->can('schema.delete');
     }
+
+    public function restore(User $user): bool
+    {
+        return $user->can('schema.restore');
+    }
 }
