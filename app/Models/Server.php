@@ -15,7 +15,6 @@ class Server extends Model
         'name',
         'ip_address',
         'api_domain',
-        'port',
         'websocket_port',
         'available',
         'production',

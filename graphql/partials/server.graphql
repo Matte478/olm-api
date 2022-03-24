@@ -40,7 +40,6 @@ type Server {
     name: String!
     ip_address: String!
     api_domain: String!
-    port: Int!
     websocket_port: Int!
     available: Boolean!
     production: Boolean!
@@ -89,7 +88,6 @@ input CreateServerInput @validator {
     name: String!
     ip_address: String!
     api_domain: String!
-    port: Int!
     websocket_port: Int!
     production: Boolean!
     enabled: Boolean!
@@ -100,7 +98,6 @@ input UpdateServerInput @validator {
     name: String!
     ip_address: String!
     api_domain: String!
-    port: Int!
     websocket_port: Int!
     production: Boolean!
     enabled: Boolean!

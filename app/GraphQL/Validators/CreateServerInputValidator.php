@@ -28,10 +28,6 @@ class CreateServerInputValidator extends Validator
                 'max:255',
                 'unique:servers,api_domain'
             ],
-            'port' => [
-                'required',
-                'integer'
-            ],
             'websocket_port' => [
                 'required',
                 'integer'

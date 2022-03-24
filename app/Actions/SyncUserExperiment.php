@@ -60,7 +60,6 @@ class SyncUserExperiment
     private function getServerData(UserExperiment $userExperiment): array
     {
         $server = $userExperiment->experiment->server;
-//        $url = 'https://' . $server->api_domain . ':' . $server->port . '/graphql';
         $url = 'https://' . $server->api_domain . '/graphql';
 
         $gql = (new Query('experimentDetails'))

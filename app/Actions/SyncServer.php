@@ -139,7 +139,7 @@ class SyncServer
      */
     private function getServerData(): array
     {
-        $url = 'https://' . $this->server->api_domain . ':' . $this->server->port . '/graphql';
+        $url = 'https://' . $this->server->api_domain . '/graphql';
 
         $gql = (new Query('SyncServer'))
             ->setSelectionSet([

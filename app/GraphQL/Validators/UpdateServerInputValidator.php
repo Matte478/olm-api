@@ -33,10 +33,6 @@ class UpdateServerInputValidator extends Validator
                 'max:255',
                 Rule::unique('servers', 'api_domain')->ignore($this->arg('id'), 'id')
             ],
-            'port' => [
-                'required',
-                'integer'
-            ],
             'websocket_port' => [
                 'required',
                 'integer'

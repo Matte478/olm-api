@@ -96,7 +96,7 @@ class RunExperimentScript
             $schemaName = $uploadResponse['name'];
         }
 
-        $url = 'https://' . $server->api_domain . ':' . $server->port . '/graphql';
+        $url = 'https://' . $server->api_domain . '/graphql';
 
         $mutationName = match ($scriptName) {
             'change' => 'ChangeScript',
@@ -243,7 +243,7 @@ class RunExperimentScript
      */
     private function uploadSchema(string $filePath, Server $server): array
     {
-        $guzzleClient = new \GuzzleHttp\Client(['base_uri' => 'https://' . $server->api_domain . ':' . $server->port]);
+        $guzzleClient = new \GuzzleHttp\Client(['base_uri' => 'https://' . $server->api_domain]);
         $response = $guzzleClient->request('POST', '/api/schema/upload', [
             'headers' => [
                 'Accept' => 'application/json',
