@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.0",
         "fruitcake/laravel-cors": "^2.0",
+        "gmostafa/php-graphql-client": "^1.13",
         "guzzlehttp/guzzle": "^7.0.1",
         "joselfonseca/lighthouse-graphql-passport-auth": "^6.0",
         "laravel/framework": "^8.54",

@@ -106,6 +106,11 @@ return [
             'path' => storage_path('logs/server.log'),
             'level' => 'debug',
         ],
+        'experiment' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/experiment.log'),
+            'level' => 'debug',
+        ],
     ],
 
 ];

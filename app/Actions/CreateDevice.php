@@ -16,7 +16,8 @@ class CreateDevice
         $device = Device::create([
             'name' => $deviceData['name'],
             'server_id' => $deviceData['server_id'],
-            'device_type_id' => $deviceType->id
+            'device_type_id' => $deviceType->id,
+            'remote_id' => $deviceData['id'],
         ]);
 
         if ($softwareIds)

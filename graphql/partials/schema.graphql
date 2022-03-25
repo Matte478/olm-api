@@ -1,9 +1,11 @@
 extend type Query @guard(with: ["api"]) {
-    schemas: [Schema!]!
+    schemas(device_type_id: ID @eq, software_id: ID @eq): [Schema!]!
         @can(ability: "show")
+        @softDeletes
         @all
     schema(id: ID @eq): Schema
         @can(ability: "show")
+        @softDeletes
         @find
 }
 
@@ -15,6 +17,9 @@ extend type Mutation @guard(with: ["api"]) {
     deleteSchema(id: ID!): Schema!
         @can(ability: "delete")
         @delete
+    restoreSchema(id: ID!): Schema!
+        @can(ability: "restore")
+        @restore
 }
 
 type Schema {
@@ -26,13 +31,16 @@ type Schema {
     note: String
     schema: String
     preview: String
+    created_at: DateTime!
+    updated_at: DateTime!
+    deleted_at: DateTime
 }
 
 type Argument {
     id: ID!
     name: String!
     label: String!
-    default_value: Float
+    default_value: String
     row: Int!
     order: Int!
     schema: Schema! @belongsTo
@@ -42,7 +50,7 @@ type Argument {
 type Option {
     id: ID!
     name: String!
-    value: Float!
+    value: String!
     argument: Argument! @belongsTo
 }
 
@@ -70,7 +78,7 @@ input UpdateSchemaInput @validator {
 input ArgumentInput {
     name: String!
     label: String!
-    default_value: Float
+    default_value: String
     row: Int
     order: Int
     options: [OptionInput!]
@@ -78,5 +86,5 @@ input ArgumentInput {
 
 input OptionInput {
     name: String!
-    value: Float!
+    value: String!
 }

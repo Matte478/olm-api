@@ -17,7 +17,7 @@ class CreateArgumentsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('label');
-            $table->double('default_value')->nullable();
+            $table->string('default_value')->nullable();
             $table->foreignId('schema_id')->constrained()->cascadeOnDelete();
             $table->integer('row')->default(1);
             $table->integer('order')->default(1);

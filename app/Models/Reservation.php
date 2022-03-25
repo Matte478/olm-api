@@ -36,7 +36,7 @@ class Reservation extends Model
 
     public function scopeCollidingWith(Builder $query, Carbon $start, Carbon $end, int $deviceId, ?int $excludeId = null): Builder
     {
-        if($excludeId) $query = $query->where('id', '!=', $excludeId);
+        if($excludeId) $query->where('id', '!=', $excludeId);
 
         return $query
             ->where('device_id', $deviceId)
@@ -55,7 +55,7 @@ class Reservation extends Model
 
     public function scopeForDay(Builder $query, Carbon $day, ?int $excludeId = null): Builder
     {
-        if($excludeId) $query = $query->where('reservations.id', '!=', $excludeId);
+        if($excludeId) $query->where('reservations.id', '!=', $excludeId);
 
         return $query->join('devices', 'devices.id', 'device_id')
             ->join('servers', 'servers.id', 'server_id')
@@ -66,6 +66,18 @@ class Reservation extends Model
     public function scopeToday(Builder $query, ?int $excludeId = null): Builder
     {
         return $this->scopeForDay($query, Carbon::today(), $excludeId);
+    }
+
+    public function scopeCurrent(Builder $query, ?bool $forAuthUser = true): Builder
+    {
+        if($forAuthUser) $query->where('user_id', auth()->user()->id);
+
+        $now = Carbon::now();
+
+        return $query->where([
+            ['start', '<=', $now],
+            ['end', '>=', $now]
+        ]);
     }
 
     // **************************** RELATIONS **************************** //

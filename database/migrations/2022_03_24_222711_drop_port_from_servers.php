@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOptionsTable extends Migration
+class DropPortFromServers extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateOptionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('options', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->string('value');
-            $table->foreignId('argument_id')->constrained()->cascadeOnDelete();
-            $table->timestamps();
+        Schema::table('servers', function (Blueprint $table) {
+            $table->dropColumn('port');
         });
     }
 
@@ -29,6 +25,8 @@ class CreateOptionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('options');
+        Schema::table('servers', function (Blueprint $table) {
+            $table->unsignedInteger('port');
+        });
     }
 }

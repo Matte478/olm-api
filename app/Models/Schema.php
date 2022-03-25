@@ -6,18 +6,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Schema extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory, InteractsWithMedia, SoftDeletes;
 
     protected $fillable = [
         'name',
         'device_type_id',
         'software_id',
         'note',
+    ];
+
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'deleted_at'
     ];
 
     public function getSchemaAttribute(): ?String
@@ -67,5 +77,10 @@ class Schema extends Model implements HasMedia
     public function arguments(): hasMany
     {
         return $this->hasMany(Argument::class);
+    }
+
+    public function userExperiments(): HasMany
+    {
+        return $this->hasMany(Experiment::class);
     }
 }

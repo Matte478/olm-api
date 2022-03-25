@@ -14,7 +14,7 @@ class Server extends Model
     protected $fillable = [
         'name',
         'ip_address',
-        'port',
+        'api_domain',
         'websocket_port',
         'available',
         'production',
@@ -43,5 +43,10 @@ class Server extends Model
     public function devices(): HasMany
     {
         return $this->hasMany(Device::class);
+    }
+
+    public function experiment(): HasMany
+    {
+        return $this->hasMany(Experiment::class);
     }
 }

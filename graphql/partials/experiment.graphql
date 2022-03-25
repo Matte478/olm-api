@@ -1,0 +1,125 @@
+extend type Query @guard(with: ["api"]) {
+    experiments(server_id: ID @eq, device_id: ID @eq): [Experiment!]!
+#        @can(ability: "show")
+        @all
+    experiment(id: ID @eq): Experiment
+#        @can(ability: "show")
+        @find
+    userExperiments(orderBy: _ @orderBy(columns: ["created_at", "filled"]), onlyMine: Boolean): [UserExperiment!]!
+        @can(ability: "show", injectArgs: true, model: "App\\Models\\UserExperiment")
+        @softDeletes
+        @paginate(type: "paginator", builder: "App\\GraphQL\\Queries\\UserExperiments")
+    userExperiment(id: ID @eq): UserExperiment
+        @can(ability: "show", injectArgs: true, find: "id")
+        @softDeletes
+        @find
+    userExperimentCurrent: UserExperiment
+        @can(ability: "create")
+}
+
+extend type Mutation @guard(with: ["api"]) {
+    runUserExperiment(input: RunUserExperimentInput! @spread): UserExperiment
+        @can(ability: "create")
+    updateUserExperiment(input: UpdateUserExperimentInput @spread): UserExperiment!
+        @can(ability: "update", find: "id")
+        @update
+    deleteUserExperiment(id: ID!): UserExperiment!
+        @can(ability: "delete", find: "id")
+        @delete
+    restoreUserExperiment(id: ID!): UserExperiment!
+        @can(ability: "restore", find: "id")
+        @restore
+}
+
+type Experiment {
+    id: ID!
+    server: Server! @belongsTo
+    deviceType: DeviceType! @belongsTo
+    device: Device @belongsTo
+    software: Software! @belongsTo
+    commands: [String]!
+    experiment_commands: [ExperimentCommand]!
+    has_schema: Boolean
+    created_at: DateTime!
+    updated_at: DateTime!
+    deleted_at: DateTime
+}
+
+type ExperimentCommand {
+    name: String!
+    arguments: [ExperimentArgument!]!
+}
+
+type ExperimentArgument {
+    name: String!
+    label: String!
+    default_value: String
+    options: [Option!]
+}
+
+type Option {
+    name: String!
+    value: String!
+}
+
+type UserExperiment {
+    id: ID!
+    user: User! @belongsTo
+    experiment: Experiment! @belongsTo
+    schema: Schema @belongsTo @softDeletes
+    input: [UserExperimentInput!]!
+    output: [UserExperimentOutput!]
+    result: String
+    note: String
+    simulation_time: Int!
+    sampling_rate: Int!
+    filled: Boolean
+    created_at: DateTime!
+    updated_at: DateTime!
+    deleted_at: DateTime
+}
+
+type UserExperimentInput {
+    script_name: String!
+    input: [[UserExperimentArg!]!]!
+}
+
+type UserExperimentOutput {
+    name: String!
+    data: [Float!]!
+}
+
+#type UserExperimentArgs {
+#    script_name: String!
+#    input: [UserExperimentArg!]!
+#}
+
+type UserExperimentArg {
+    name: String!
+    value: String!
+    label: String
+}
+
+input UserExperimentArgsInput {
+    script_name: String!
+    input: [UserExperimentArgInput!]!
+}
+
+input UserExperimentArgInput {
+    name: String!
+    value: String!
+}
+
+input RunUserExperimentInput @validator {
+    user_experiment_id: ID
+    experiment_id: ID!
+    schema_id: ID
+    input: [UserExperimentArgsInput!]!
+    software_id: ID!
+    note: String
+}
+
+input UpdateUserExperimentInput @validator {
+    id: ID!
+    note: String
+}

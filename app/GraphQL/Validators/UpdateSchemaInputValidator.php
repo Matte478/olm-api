@@ -49,7 +49,7 @@ class UpdateSchemaInputValidator extends Validator
             ],
             'arguments.*.default_value' => [
                 'nullable',
-                'numeric',
+                'max:255',
             ],
             'arguments.*.row' => [
                 'integer',
@@ -66,7 +66,7 @@ class UpdateSchemaInputValidator extends Validator
             ],
             'arguments.*.options.*.value' => [
                 'required',
-                'numeric',
+                'max:255',
             ],
             'schema' => [
                 'mimetypes:text/xml,application/octet-stream'

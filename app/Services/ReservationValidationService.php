@@ -11,7 +11,7 @@ class ReservationValidationService
     /**
      * @throws BusinessLogicException
      */
-    public function validate(Carbon $start, Carbon $end, int $deviceId, ?Reservation $reservation = null)
+    public function validate(Carbon $start, Carbon $end, int $deviceId, ?Reservation $reservation = null): void
     {
         $user = auth()->user();
 
@@ -30,7 +30,7 @@ class ReservationValidationService
     /**
      * @throws BusinessLogicException
      */
-    public function validateDeviceAvailability(Carbon $start, Carbon $end, int $deviceId, ?Reservation $reservation = null)
+    public function validateDeviceAvailability(Carbon $start, Carbon $end, int $deviceId, ?Reservation $reservation = null): void
     {
         $this->validateDeviceMaintenance($start, $end);
 
@@ -44,7 +44,7 @@ class ReservationValidationService
     /**
      * @throws BusinessLogicException
      */
-    public function validateDeviceMaintenance(Carbon $start, Carbon $end)
+    public function validateDeviceMaintenance(Carbon $start, Carbon $end): void
     {
         $maintenanceStart = config('reservation.daily_maintenance_start');
         $maintenanceEnd = config('reservation.daily_maintenance_end');
@@ -78,7 +78,7 @@ class ReservationValidationService
     /**
      * @throws BusinessLogicException
      */
-    public function validateMaxReservationTime(Carbon $start, Carbon $end)
+    public function validateMaxReservationTime(Carbon $start, Carbon $end): void
     {
         $maxReservationTime = config('reservation.max_reservation_time');
 
@@ -90,7 +90,7 @@ class ReservationValidationService
     /**
      * @throws BusinessLogicException
      */
-    public function validateMaxReservationsPerUser(Carbon $start, ?Reservation $reservation = null)
+    public function validateMaxReservationsPerUser(Carbon $start, ?Reservation $reservation = null): void
     {
         $user = auth()->user();
         $maxReservationsPerUser = config('reservation.max_reservations_per_user');
@@ -103,7 +103,7 @@ class ReservationValidationService
     /**
      * @throws BusinessLogicException
      */
-    public function validateUpdatePossibility(Reservation $reservation)
+    public function validateUpdatePossibility(Reservation $reservation): void
     {
         if($reservation->start->isPast()) {
             throw new BusinessLogicException("You cannot update an expired or ongoing reservation.");

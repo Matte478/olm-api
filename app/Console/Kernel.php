@@ -24,7 +24,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->command('user-experiments:sync')->everyMinute();
+
+        $schedule->command('servers:sync')->dailyAt(
+            config('reservation.daily_maintenance_start')['cron']
+        );
     }
 
     /**
