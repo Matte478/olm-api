@@ -17,6 +17,7 @@ class UserExperiment extends Model implements HasMedia
     protected $fillable = [
         'user_id',
         'experiment_id',
+        'device_id',
         'schema_id',
         'input',
         'output',
@@ -78,6 +79,11 @@ class UserExperiment extends Model implements HasMedia
     public function experiment(): BelongsTo
     {
         return $this->belongsTo(Experiment::class);
+    }
+
+    public function device(): BelongsTo
+    {
+        return $this->belongsTo(Device::class);
     }
 
     public function schema(): BelongsTo

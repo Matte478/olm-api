@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,6 +37,15 @@ class Device extends Model
         return $this->server->production;
     }
 
+    // **************************** SCOPES **************************** //
+
+    public function scopeFilterSoftware(Builder $query, int $softwareId): Builder
+    {
+        return $query->whereHas('software', function($q) use ($softwareId) {
+            $q->where('software_id', $softwareId);
+        });
+    }
+
     // **************************** RELATIONS **************************** //
 
     public function server(): BelongsTo
@@ -61,5 +71,10 @@ class Device extends Model
     public function experiment(): HasMany
     {
         return $this->hasMany(Experiment::class);
+    }
+
+    public function userExperiment(): HasMany
+    {
+        return $this->hasMany(UserExperiment::class);
     }
 }

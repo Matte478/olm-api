@@ -12,9 +12,11 @@ class UserExperimentValidationService
     /**
      * @throws BusinessLogicException
      */
-    public function validate(Experiment $experiment, string $command, int $deviceId): void
+    public function validate(Experiment $experiment, string $command, ?int $deviceId = null): void
     {
-        $this->validateDeviceReservation($deviceId);
+        if($deviceId)
+            $this->validateDeviceReservation($deviceId);
+
         $this->validateCommand($experiment, $command);
     }
 

@@ -59,6 +59,8 @@ type Device {
     remote_id: ID!
     software: [Software!]! @belongsToMany
     reservations(start: DateTimeRange @whereBetween, end: DateTimeRange @whereBetween): [Reservation!]! @hasMany
+    experiment: [Experiment!]! @hasMany
+    userExperiment: [UserExperiment!]! @hasMany
     created_at: DateTime!
     updated_at: DateTime!
     deleted_at: DateTime
