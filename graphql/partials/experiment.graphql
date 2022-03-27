@@ -35,7 +35,8 @@ extend type Mutation @guard(with: ["api"]) {
 
 type Experiment {
     id: ID!
-    server: Server! @belongsTo
+    name: String!
+    server: Server @belongsTo
     deviceType: DeviceType! @belongsTo
     device: Device @belongsTo
     software: Software! @belongsTo
@@ -77,6 +78,7 @@ type UserExperiment {
     simulation_time: Int!
     sampling_rate: Int!
     filled: Boolean
+    remote_id: ID
     created_at: DateTime!
     updated_at: DateTime!
     deleted_at: DateTime

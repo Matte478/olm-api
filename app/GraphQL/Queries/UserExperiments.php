@@ -20,7 +20,7 @@ class UserExperiments
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $unfinished = UserExperiment::unfinished(false)->get();
+        $unfinished = UserExperiment::executed(false)->unfinished(false)->get();
 
         foreach ($unfinished as $userExperiment) {
             app(SyncUserExperiment::class)->execute($userExperiment);

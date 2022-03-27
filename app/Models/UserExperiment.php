@@ -42,6 +42,13 @@ class UserExperiment extends Model implements HasMedia
 
     // **************************** SCOPES **************************** //
 
+    public function scopeExecuted(Builder $query, ?bool $forAuthUser = true): Builder
+    {
+        if($forAuthUser) $query->where('user_id', auth()->user()->id);
+
+        return $query->where('remote_id', '!=', null);
+    }
+
     public function scopeUnfinished(Builder $query, ?bool $forAuthUser = true): Builder
     {
         if($forAuthUser) $query->where('user_id', auth()->user()->id);

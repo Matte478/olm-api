@@ -35,11 +35,11 @@ class SyncUserExperiments extends Command
     /**
      * Execute the console command.
      *
-     * @return int
+     * @return void
      */
     public function handle()
     {
-        $unfinished = UserExperiment::unfinished(false)->get();
+        $unfinished = UserExperiment::executed(false)->unfinished(false)->get();
 
         foreach ($unfinished as $userExperiment) {
             app(SyncUserExperiment::class)->execute($userExperiment);

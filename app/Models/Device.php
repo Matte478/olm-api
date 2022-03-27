@@ -46,6 +46,16 @@ class Device extends Model
         });
     }
 
+    public function scopeFilterAvailable(Builder $query): Builder
+    {
+        return $query->whereHas('server', function($q) {
+            $q->where([
+                'production' => true,
+                'enabled' => true,
+            ]);
+        });
+    }
+
     // **************************** RELATIONS **************************** //
 
     public function server(): BelongsTo
@@ -73,7 +83,7 @@ class Device extends Model
         return $this->hasMany(Experiment::class);
     }
 
-    public function userExperiment(): HasMany
+    public function userExperiments(): HasMany
     {
         return $this->hasMany(UserExperiment::class);
     }

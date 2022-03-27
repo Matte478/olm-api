@@ -13,10 +13,15 @@ use Illuminate\Support\Facades\Storage;
 class SyncUserExperiment
 {
     /**
+     * @param UserExperiment $userExperiment
      * @throws BusinessLogicException
+     * @throws \Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist
+     * @throws \Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig
      */
     public function execute(UserExperiment $userExperiment): void
     {
+        if(!$userExperiment->remote_id) return;
+
         $response = $this->getServerData($userExperiment);
 
         if($response['status'] == 'running') return;
@@ -59,7 +64,7 @@ class SyncUserExperiment
      */
     private function getServerData(UserExperiment $userExperiment): array
     {
-        $server = $userExperiment->experiment->server;
+        $server = $userExperiment->device->server;
         $url = 'https://' . $server->api_domain . '/graphql';
 
         $gql = (new Query('experimentDetails'))
