@@ -9,19 +9,23 @@ use Carbon\Carbon;
 
 class UserExperimentValidationService
 {
+    const AVAILABILITY_THRESHOLD_SECONDS = 60;
+
     /**
      * @throws BusinessLogicException
      */
-    public function validate(Experiment $experiment, string $command, int $deviceId): void
+    public function validate(Experiment $experiment, string $command, ?int $deviceId = null, ?int $simulationTime = null): void
     {
-        $this->validateDeviceReservation($deviceId);
+        if($deviceId)
+            $this->validateDeviceReservation($deviceId, $simulationTime);
+
         $this->validateCommand($experiment, $command);
     }
 
     /**
      * @throws BusinessLogicException
      */
-    public function validateDeviceReservation(int $deviceId): void
+    public function validateDeviceReservation(int $deviceId, ?int $simulationTime = null): void
     {
         $user = auth()->user();
         $now = Carbon::now();
@@ -35,6 +39,20 @@ class UserExperimentValidationService
 
         if(!$reservation)
             throw new BusinessLogicException('The device is not reserved.');
+
+        if($simulationTime)
+            $this->validateExperimentDuration($reservation, $simulationTime);
+    }
+
+    /**
+     * @throws BusinessLogicException
+     */
+    public function validateExperimentDuration(Reservation $reservation, int $simulationTime): void
+    {
+        $experimentEnd = Carbon::now()->addSeconds($simulationTime + self::AVAILABILITY_THRESHOLD_SECONDS);
+
+        if ($experimentEnd > $reservation->end)
+            throw new BusinessLogicException('The experiment cannot be run at the reserved time.');
     }
 
     /**

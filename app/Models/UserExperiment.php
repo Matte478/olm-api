@@ -17,6 +17,7 @@ class UserExperiment extends Model implements HasMedia
     protected $fillable = [
         'user_id',
         'experiment_id',
+        'device_id',
         'schema_id',
         'input',
         'output',
@@ -40,6 +41,13 @@ class UserExperiment extends Model implements HasMedia
     }
 
     // **************************** SCOPES **************************** //
+
+    public function scopeExecuted(Builder $query, ?bool $forAuthUser = true): Builder
+    {
+        if($forAuthUser) $query->where('user_id', auth()->user()->id);
+
+        return $query->where('remote_id', '!=', null);
+    }
 
     public function scopeUnfinished(Builder $query, ?bool $forAuthUser = true): Builder
     {
@@ -78,6 +86,11 @@ class UserExperiment extends Model implements HasMedia
     public function experiment(): BelongsTo
     {
         return $this->belongsTo(Experiment::class);
+    }
+
+    public function device(): BelongsTo
+    {
+        return $this->belongsTo(Device::class);
     }
 
     public function schema(): BelongsTo

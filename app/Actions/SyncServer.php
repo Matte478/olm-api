@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Exceptions\BusinessLogicException;
 use App\Models\Device;
+use App\Models\DeviceType;
 use App\Models\Experiment;
 use GraphQL\Client;
 use GraphQL\Exception\QueryError;
@@ -73,6 +74,71 @@ class SyncServer
 
             $this->syncExperiments($server, $localDevice, $remoteDevice['software'], $remoteDevice['output']);
         }
+
+        $this->syncDeviceTypeExperiments($response['devices']);
+    }
+
+    /**
+     * @param array $remoteDevices
+     * @return void
+     */
+    private function syncDeviceTypeExperiments(array $remoteDevices): void
+    {
+        $deviceTypeExperiments = [];
+        foreach ($remoteDevices as $remoteDevice) {
+            $type = $remoteDevice['type'];
+            $deviceTypeExperiments[$type]['output'] = $remoteDevice['output'];
+            if(!isset($deviceTypeExperiments[$type]['software']))
+                $deviceTypeExperiments[$type]['software'] = [];
+
+            foreach ($remoteDevice['software'] as $soft) {
+                $exists = false;
+                foreach ($deviceTypeExperiments[$type]['software'] as $localSoft) {
+                    if ($soft['name'] === $localSoft['name']) {
+                        $exists = true;
+                        break;
+                    }
+                }
+
+                if(!$exists)
+                    $deviceTypeExperiments[$type]['software'][] = $soft;
+            }
+        }
+
+        foreach ($deviceTypeExperiments as $deviceType => $deviceTypeExperiment) {
+            $deviceType = $this->getDeviceType($deviceType);
+
+            foreach ($deviceTypeExperiment['software'] as $soft) {
+                app(SyncExperiment::class)->execute(
+                    $deviceType, $this->getSoftware($soft['name']), $soft['commands'], $deviceTypeExperiment['output'],
+                    null, null, $soft['has_schema'] ?? true
+                );
+            }
+        }
+
+        $this->cleanupDeviceTypeExperiments();
+    }
+
+    /**
+     * @return void
+     */
+    public function cleanupDeviceTypeExperiments(): void
+    {
+        $experiments = Experiment::where([
+            'server_id' => null,
+            'device_id' => null
+        ])->get();
+
+        foreach ($experiments as $experiment) {
+            $deviceType = $experiment->deviceType;
+            $software = $experiment->software;
+
+            $devicesCount = $deviceType->devices()->filterSoftware($software->id)->count();
+
+            // device of the required type with the required software does not exist
+            if(!$devicesCount)
+                $experiment->delete();
+        }
     }
 
     /**
@@ -87,7 +153,7 @@ class SyncServer
         $experimentsIds = [];
         foreach ($software as $soft) {
             $experimentsIds[] = app(SyncExperiment::class)->execute(
-                $server, $device, $this->getSoftware($soft['name']), $soft['commands'], $output,
+                $device->deviceType, $this->getSoftware($soft['name']), $soft['commands'], $output, $server, $device,
                 $soft['has_schema'] ?? true
             )->id;
         }
@@ -131,6 +197,15 @@ class SyncServer
     private function getSoftware(string $softwareName): Software
     {
         return Software::firstOrCreate(['name' => $softwareName]);
+    }
+
+    /**
+     * @param string $deviceTypeName
+     * @return DeviceType
+     */
+    private function getDeviceType(string $deviceTypeName): DeviceType
+    {
+        return DeviceType::firstOrCreate(['name' => $deviceTypeName]);
     }
 
     /**

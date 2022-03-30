@@ -11,7 +11,7 @@ class SchemaPolicy
 
     public function show(User $user): bool
     {
-        return $user->can('schema.show');
+        return $user->canAny(['schema.show', 'user_experiment.create']);
     }
 
     public function create(User $user): bool

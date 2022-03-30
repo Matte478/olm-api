@@ -27,7 +27,9 @@ class RunUserExperiment
         $schema = isset($args['schema_id']) ? Schema::findOrFail($args['schema_id']) : null;
         $userExperiment = isset($args['user_experiment_id']) ? UserExperiment::findOrFail($args['user_experiment_id']) : null;
 
-        return app(\App\Actions\RunExperimentScript::class)
-            ->execute($experiment,  $args['input'][0]['script_name'], $args['input'][0]['input'], $software, $schema, $userExperiment);
+        return app(\App\Actions\RunUserExperiment::class)->execute(
+            $experiment, $args['input'][0]['script_name'], $args['input'][0]['input'],
+            $software, $schema, $userExperiment
+        );
     }
 }

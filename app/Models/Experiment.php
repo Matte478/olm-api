@@ -30,6 +30,11 @@ class Experiment extends Model
         'output_arguments' => 'array'
     ];
 
+    public function getNameAttribute(): String
+    {
+        return ($this->device?->name ?? $this->deviceType->name) . ' | ' . $this->software->name;
+    }
+
     // **************************** RELATIONS **************************** //
 
     public function server(): BelongsTo

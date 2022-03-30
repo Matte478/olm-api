@@ -29,11 +29,14 @@ extend type Mutation @guard(with: ["api"]) {
     restoreUserExperiment(id: ID!): UserExperiment!
         @can(ability: "restore", find: "id")
         @restore
+    queueUserExperiment(input: QueueUserExperimentInput! @spread): UserExperiment!
+        @can(ability: "create")
 }
 
 type Experiment {
     id: ID!
-    server: Server! @belongsTo
+    name: String!
+    server: Server @belongsTo
     deviceType: DeviceType! @belongsTo
     device: Device @belongsTo
     software: Software! @belongsTo
@@ -66,6 +69,7 @@ type UserExperiment {
     id: ID!
     user: User! @belongsTo
     experiment: Experiment! @belongsTo
+    device: Device @belongsTo
     schema: Schema @belongsTo @softDeletes
     input: [UserExperimentInput!]!
     output: [UserExperimentOutput!]
@@ -74,6 +78,7 @@ type UserExperiment {
     simulation_time: Int!
     sampling_rate: Int!
     filled: Boolean
+    remote_id: ID
     created_at: DateTime!
     updated_at: DateTime!
     deleted_at: DateTime
@@ -122,4 +127,11 @@ input RunUserExperimentInput @validator {
 input UpdateUserExperimentInput @validator {
     id: ID!
     note: String
+}
+
+input QueueUserExperimentInput @validator {
+    experiment_id: ID!
+    schema_id: ID
+    input: [UserExperimentArgsInput!]!
+    software_id: ID!
 }

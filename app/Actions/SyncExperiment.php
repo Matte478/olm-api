@@ -3,16 +3,20 @@
 namespace App\Actions;
 
 use App\Models\Device;
+use App\Models\DeviceType;
 use App\Models\Experiment;
 use App\Models\Server;
 use App\Models\Software;
 
 class SyncExperiment
 {
-    public function execute(Server $server, Device $device, Software $software, array $commands, array $output, ?bool $hasSchema = null): Experiment
+    public function execute(
+        DeviceType $deviceType, Software $software, array $commands, array $output,
+        ?Server $server = null, ?Device $device = null, ?bool $hasSchema = null
+    ): Experiment
     {
         $experimentData = [
-            'device_type_id' => $device->deviceType->id,
+            'device_type_id' => $deviceType->id,
             'commands' => $this->getCommandsNames($commands),
             'experiment_commands' => $this->formatCommands($commands),
             'output_arguments' => $output,
@@ -25,9 +29,10 @@ class SyncExperiment
         }
 
         return Experiment::withTrashed()->updateOrCreate([
-            'server_id' => $server->id,
-            'device_id' => $device->id,
-            'software_id' => $software->id
+            'device_type_id' => $deviceType->id,
+            'software_id' => $software->id,
+            'server_id' => $server?->id,
+            'device_id' => $device?->id,
         ], $experimentData);
     }
 

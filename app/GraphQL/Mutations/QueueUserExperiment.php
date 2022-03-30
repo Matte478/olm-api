@@ -1,13 +1,13 @@
 <?php
 
-namespace App\GraphQL\Queries;
+namespace App\GraphQL\Mutations;
 
-use App\Actions\SyncUserExperiment;
-use App\Models\UserExperiment;
+use App\Models\Experiment;
+use App\Models\Schema;
 use GraphQL\Type\Definition\ResolveInfo;
 use Nuwave\Lighthouse\Support\Contracts\GraphQLContext;
 
-class UserExperiments
+class QueueUserExperiment
 {
     /**
      * Return a value for the field.
@@ -20,17 +20,10 @@ class UserExperiments
      */
     public function __invoke($root, array $args, GraphQLContext $context, ResolveInfo $resolveInfo)
     {
-        $unfinished = UserExperiment::executed(false)->unfinished(false)->get();
+        $experiment = Experiment::findOrFail($args['experiment_id']);
+        $schema = isset($args['schema_id']) ? Schema::findOrFail($args['schema_id']) : null;
 
-        foreach ($unfinished as $userExperiment) {
-            app(SyncUserExperiment::class)->execute($userExperiment);
-        }
-
-        $query = UserExperiment::query();
-
-        if($args['onlyMine'])
-            $query->where('user_id', auth()->user()->id);
-
-        return $query;
+        return app(\App\Actions\QueueUserExperiment::class)
+            ->execute($experiment, $args['input'][0]['script_name'], $args['input'][0]['input'], $schema);
     }
 }
