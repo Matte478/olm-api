@@ -39,7 +39,12 @@ class RunUserExperiment
         if(!$device)
             throw new BusinessLogicException('The device must be defined.');
 
-        app(UserExperimentValidationService::class)->validate($experiment, $scriptName, $device->id);
+        $simulationTime = null;
+        if(!$userExperiment) {
+            $simulationTime = (int) $this->userExperimentService->getInputValue($inputs, 't_sim');
+        }
+
+        app(UserExperimentValidationService::class)->validate($experiment, $scriptName, $device->id, $simulationTime);
 
         $inputs = $this->userExperimentService->formatInput($inputs, $experiment, $scriptName, $schema);
 
@@ -57,7 +62,6 @@ class RunUserExperiment
                 'filled' => null,
             ]);
         else {
-            $simulationTime = (int) $this->userExperimentService->getInputValue($inputs, 't_sim');
             $samplingRate = (int) $this->userExperimentService->getInputValue($inputs, 's_rate');
             $userExperiment = UserExperiment::create([
                 'user_id' => $user->id,
