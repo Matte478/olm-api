@@ -65,6 +65,8 @@ class SyncExperiment
                 'name' => $arg['name'],
                 'label' => $arg['title'],
                 'default_value' => $arg['placeholder'],
+                'row' => $arg['row'],
+                'order' => $arg['order'],
             ];
 
             if(isset($arg['values'])) {

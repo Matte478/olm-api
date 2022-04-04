@@ -242,6 +242,8 @@ class SyncServer
                                                 'title',
                                                 'placeholder',
                                                 'type',
+                                                'row',
+                                                'order',
                                             ]),
                                     ])
                             ])

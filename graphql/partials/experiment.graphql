@@ -57,10 +57,12 @@ type ExperimentArgument {
     name: String!
     label: String!
     default_value: String
-    options: [Option!]
+    row: Int!
+    order: Int!
+    options: [ExperimentOption!]
 }
 
-type Option {
+type ExperimentOption {
     name: String!
     value: String!
 }
@@ -68,8 +70,8 @@ type Option {
 type UserExperiment {
     id: ID!
     user: User! @belongsTo
-    experiment: Experiment! @belongsTo
-    device: Device @belongsTo
+    experiment: Experiment! @belongsTo @softDeletes
+    device: Device @belongsTo @softDeletes
     schema: Schema @belongsTo @softDeletes
     input: [UserExperimentInput!]!
     output: [UserExperimentOutput!]
@@ -93,11 +95,6 @@ type UserExperimentOutput {
     name: String!
     data: [Float!]!
 }
-
-#type UserExperimentArgs {
-#    script_name: String!
-#    input: [UserExperimentArg!]!
-#}
 
 type UserExperimentArg {
     name: String!
