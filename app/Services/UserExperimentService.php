@@ -25,7 +25,7 @@ class UserExperimentService
         }
 
         if($schema) {
-            $schemaArguments = $schema->arguments()->get()->toArray();
+            $schemaArguments = $schema->arguments()->with('options')->get()->toArray();
             $commandArguments = array_merge($commandArguments, $schemaArguments);
         }
 
@@ -35,6 +35,17 @@ class UserExperimentService
                 if($input['name'] === $argument['name']) {
                     $input['label'] = $argument['label'] ?? $argument['name'];
                     $processed = true;
+
+                    if(isset($argument['options']) && is_array($argument['options']) && count($argument['options'])) {
+                        $processed = false;
+                        foreach ($argument['options'] as $option) {
+                            if($input['value'] == $option['value']) {
+                                $input['value'] = $option['name'];
+                                $processed = true;
+                            }
+                        }
+                    }
+
                     break;
                 }
             }

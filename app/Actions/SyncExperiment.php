@@ -67,19 +67,8 @@ class SyncExperiment
                 'default_value' => $arg['placeholder'],
                 'row' => $arg['row'],
                 'order' => $arg['order'],
+                'options' => $arg['options'] ?? null
             ];
-
-            if(isset($arg['values'])) {
-                $options = [];
-                foreach ($arg['values'] as $option) {
-                    $options[] = [
-                        'name' => $option['name'],
-                        'value' => $option['value'],
-                    ];
-                }
-
-                $formatted['options'] = $options;
-            }
 
             $formattedArguments[] = $formatted;
         }

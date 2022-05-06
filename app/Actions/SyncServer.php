@@ -244,6 +244,12 @@ class SyncServer
                                                 'type',
                                                 'row',
                                                 'order',
+
+                                                (new Query('options'))
+                                                    ->setSelectionSet([
+                                                        'name',
+                                                        'value',
+                                                    ]),
                                             ]),
                                     ])
                             ])
