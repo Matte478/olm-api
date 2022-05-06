@@ -5,7 +5,6 @@ namespace App\Actions;
 use App\Exceptions\BusinessLogicException;
 use App\Models\Experiment;
 use App\Models\Schema;
-use App\Models\Software;
 use App\Models\UserExperiment;
 use App\Services\UserExperimentService;
 use App\Jobs\RunUserExperiment as RunUserExperimentJob;

@@ -30,7 +30,7 @@ class SyncUserExperiment
             $userExperiment->update(['filled' => 0]);
         } else if ($response['status'] == 'finished') {
             $userExperiment->update([
-                'filled' => 1,
+                'filled' => $response['values'] ? 1 : 0, // if we don't have the measured values, then there was an error in the processing
                 'output' => $response['values'] ?? null
             ]);
 
