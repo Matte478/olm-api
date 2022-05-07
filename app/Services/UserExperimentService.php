@@ -40,7 +40,7 @@ class UserExperimentService
                         $processed = false;
                         foreach ($argument['options'] as $option) {
                             if($input['value'] == $option['value']) {
-                                $input['value'] = $option['name'];
+                                $input['formatted_value'] = $option['name'];
                                 $processed = true;
                             }
                         }

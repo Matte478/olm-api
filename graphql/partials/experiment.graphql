@@ -99,6 +99,7 @@ type UserExperimentOutput {
 type UserExperimentArg {
     name: String!
     value: String!
+    formatted_value: String
     label: String
 }
 
