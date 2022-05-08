@@ -29,13 +29,10 @@ class SyncUserExperiment
         if($response['status'] == 'failed') {
             $userExperiment->update(['filled' => 0]);
         } else if ($response['status'] == 'finished') {
-            $userExperiment->update([
-                'filled' => $response['values'] ? 1 : 0, // if we don't have the measured values, then there was an error in the processing
-                'output' => $response['values'] ?? null
-            ]);
-
             if($response['url'])
                 $this->fetchResult($userExperiment, $response['url']);
+            else
+                $userExperiment->update(['filled' => 0]);
         }
     }
 
@@ -52,9 +49,44 @@ class SyncUserExperiment
         $fileName = 'tmp/user-experiments/' . $userExperiment->id . '.csv';
         Storage::put($fileName, $result);
         $path = storage_path("app/$fileName");
+
+        $data = $this->readCSV($path);
+        $userExperiment->update([
+            'filled' => $data && count($data[0]['data']) ? 1 : 0, // if we don't have the measured values, then there was an error in the processing
+            'output' => $data
+        ]);
+
         $userExperiment
             ->addMedia($path)
             ->toMediaCollection('result');
+    }
+
+    /**
+     * @param $csvFile
+     * @return array
+     */
+    private function readCSV($csvFile): array
+    {
+        $fileHandler = fopen($csvFile, 'r');
+        $headers = fgetcsv($fileHandler, 0, ',');
+
+        $data = [];
+        foreach ($headers as $header) {
+           $data[] = [
+               'name' => $header,
+               'data' => []
+           ];
+        }
+
+        while (($line = fgetcsv($fileHandler, 0, ',')) !== false) {
+            foreach ($line as $index => $value) {
+                if(is_null($value)) continue;
+
+                $data[$index]['data'][] = $value;
+            }
+        }
+        fclose($fileHandler);
+        return $data;
     }
 
     /**
@@ -74,11 +106,6 @@ class SyncUserExperiment
             ->setSelectionSet([
                 'url',
                 'status',
-                (new Query('values'))
-                    ->setSelectionSet([
-                        'name',
-                        'data',
-                    ]),
             ]);
 
         try {
