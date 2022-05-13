@@ -23,7 +23,9 @@ class UserExperiments
         $unfinished = UserExperiment::executed(false)->unfinished(false)->get();
 
         foreach ($unfinished as $userExperiment) {
-            app(SyncUserExperiment::class)->execute($userExperiment);
+            try {
+                app(SyncUserExperiment::class)->execute($userExperiment);
+            } catch (\Throwable $e) {}
         }
 
         $query = UserExperiment::query();
